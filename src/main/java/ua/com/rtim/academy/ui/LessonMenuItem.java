@@ -1,6 +1,5 @@
 package ua.com.rtim.academy.ui;
 
-import static java.lang.Integer.parseInt;
 import static java.time.LocalTime.of;
 
 import java.time.LocalDate;
@@ -22,24 +21,27 @@ public class LessonMenuItem {
 
     public LessonMenuItem(Academy academy, Scanner scanner) {
         System.out.println(
-                "Lesson: a: Create, b: Create Lesson Time, c: Update, d: Add time to Lesson, e: Add groups, f: Delete");
-        switch (scanner.nextLine()) {
+                "Lesson: a: Find All, b: Create, c: Create Lesson Time, d: Update, e: Add time to Lesson, f: Add groups, g: Delete");
+        switch (scanner.next()) {
         case "a":
-            createLesson(academy, scanner);
+            findAllLessons(academy);
             break;
         case "b":
-            createLessonTime(scanner);
+            createLesson(academy, scanner);
             break;
         case "c":
-            updateLesson(academy, scanner);
+            createLessonTime(scanner);
             break;
         case "d":
-            addTimeToLesson(academy, scanner);
+            updateLesson(academy, scanner);
             break;
         case "e":
-            addGroupsToLesson(academy, scanner);
+            addTimeToLesson(academy, scanner);
             break;
         case "f":
+            addGroupsToLesson(academy, scanner);
+            break;
+        case "g":
             deleteLesson(academy, scanner);
             break;
         default:
@@ -47,36 +49,41 @@ public class LessonMenuItem {
         }
     }
 
+    public void findAllLessons(Academy academy) {
+        List<Lesson> lessons = academy.getAllLessons();
+        lessons.forEach(lesson -> System.out.println(lesson.getTime()));
+    }
+
     private void createLesson(Academy academy, Scanner scanner) {
         Lesson lesson = new Lesson();
         System.out.println("Teacher id");
-        lesson.setTeacher(academy.getTeacherById(parseInt(scanner.nextLine())));
+        lesson.setTeacher(academy.getTeacherById(scanner.nextInt()));
         System.out.println("Course");
-        lesson.setCourse(academy.getCourseById(parseInt(scanner.nextLine())));
+        lesson.setCourse(academy.getCourseById(scanner.nextInt()));
         System.out.println("Audience");
-        Audience audience = academy.getAudienceById(parseInt(scanner.nextLine()));
+        Audience audience = academy.getAudienceById(scanner.nextInt());
         lesson.setAudience(audience);
         academy.addLesson(lesson);
     }
 
     private void updateLesson(Academy academy, Scanner scanner) {
         System.out.println("Leeson id");
-        Lesson lesson = academy.getLessonById(parseInt(scanner.nextLine()));
+        Lesson lesson = academy.getLessonById(scanner.nextInt());
         System.out.println("Teacher");
-        Teacher teacher = academy.getTeacherById(parseInt(scanner.nextLine()));
+        Teacher teacher = academy.getTeacherById(scanner.nextInt());
         lesson.setTeacher(teacher);
         System.out.println("Course");
-        Course course = academy.getCourseById(parseInt(scanner.nextLine()));
+        Course course = academy.getCourseById(scanner.nextInt());
         lesson.setCourse(course);
         System.out.println("Audience");
-        Audience audience = academy.getAudienceById(parseInt(scanner.nextLine()));
+        Audience audience = academy.getAudienceById(scanner.nextInt());
         lesson.setAudience(audience);
         System.out.println("Date");
-        int year = parseInt(scanner.nextLine());
+        int year = scanner.nextInt();
         System.out.println("Month");
-        int month = parseInt(scanner.nextLine());
+        int month = scanner.nextInt();
         System.out.println("Day");
-        int day = parseInt(scanner.nextLine());
+        int day = scanner.nextInt();
         LocalDate date = LocalDate.of(year, month, day);
         lesson.setDate(date);
     }
@@ -84,32 +91,32 @@ public class LessonMenuItem {
     public void createLessonTime(Scanner scanner) {
         LessonTime lessonTime = new LessonTime();
         System.out.println("Start time");
-        lessonTime.setStartTime(of(parseInt(scanner.nextLine()), parseInt(scanner.nextLine())));
+        lessonTime.setStartTime(of(scanner.nextInt(), scanner.nextInt()));
         System.out.println("End time");
-        lessonTime.setEndTime(of(parseInt(scanner.nextLine()), parseInt(scanner.nextLine())));
+        lessonTime.setEndTime(of(scanner.nextInt(), scanner.nextInt()));
         lessonTimes.add(lessonTime);
     }
 
     private void addTimeToLesson(Academy academy, Scanner scanner) {
         System.out.println("Lesson id");
-        Lesson lesson = academy.getLessonById(parseInt(scanner.nextLine()));
+        Lesson lesson = academy.getLessonById(scanner.nextInt());
         System.out.println("Lesson time id");
-        LessonTime lessonTime = lessonTimes.get(parseInt(scanner.nextLine()));
+        LessonTime lessonTime = lessonTimes.get(scanner.nextInt());
         lesson.setTime(lessonTime);
     }
 
     private void addGroupsToLesson(Academy academy, Scanner scanner) {
         System.out.println("Leeson id");
-        Lesson lesson = academy.getLessonById(parseInt(scanner.nextLine()));
+        Lesson lesson = academy.getLessonById(scanner.nextInt());
         List<Group> groups = new ArrayList<>();
         System.out.println("Group id");
-        Group group = academy.getGroupById(parseInt(scanner.nextLine()));
+        Group group = academy.getGroupById(scanner.nextInt());
         groups.add(group);
         lesson.setGroups(groups);
     }
 
     private void deleteLesson(Academy academy, Scanner scanner) {
         System.out.println("Lesson Id");
-        academy.deleteLessonById(parseInt(scanner.nextLine()));
+        academy.deleteLessonById(scanner.nextInt());
     }
 }

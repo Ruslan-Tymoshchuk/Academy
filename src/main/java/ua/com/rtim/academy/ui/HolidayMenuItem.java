@@ -1,8 +1,7 @@
 package ua.com.rtim.academy.ui;
 
-import static java.lang.Integer.parseInt;
-
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Scanner;
 
 import ua.com.rtim.academy.domain.Academy;
@@ -11,15 +10,18 @@ import ua.com.rtim.academy.domain.Holiday;
 public class HolidayMenuItem {
 
     public HolidayMenuItem(Academy academy, Scanner scanner) {
-        System.out.println("Holiday: a: Create, b: Update, c: Delete");
-        switch (scanner.nextLine()) {
+        System.out.println("Holiday: a: Find All, b: Create, c: Update, d: Delete");
+        switch (scanner.next()) {
         case "a":
-            createHoliday(academy, scanner);
+            findAllHolidays(academy);
             break;
         case "b":
-            updateHoliday(academy, scanner);
+            createHoliday(academy, scanner);
             break;
         case "c":
+            updateHoliday(academy, scanner);
+            break;
+        case "d":
             deleteHoliday(academy, scanner);
             break;
         default:
@@ -27,38 +29,43 @@ public class HolidayMenuItem {
         }
     }
 
+    public void findAllHolidays(Academy academy) {
+        List<Holiday> holidays = academy.getAllHolidays();
+        holidays.forEach(holiday -> System.out.println(holiday.getName()));
+    }
+
     private void createHoliday(Academy academy, Scanner scanner) {
         Holiday holiday = new Holiday();
         System.out.println("Name");
-        holiday.setName(scanner.nextLine());
+        holiday.setName(scanner.next());
         System.out.println("Date:");
         System.out.println("Year");
-        int year = parseInt(scanner.nextLine());
+        int year = scanner.nextInt();
         System.out.println("Month");
-        int month = parseInt(scanner.nextLine());
+        int month = scanner.nextInt();
         System.out.println("Day");
-        int day = parseInt(scanner.nextLine());
+        int day = scanner.nextInt();
         LocalDate date = LocalDate.of(year, month, day);
         holiday.setDate(date);
         academy.addHoliday(holiday);
     }
 
     private void updateHoliday(Academy academy, Scanner scanner) {
-        Holiday holiday = academy.getHolidayById(parseInt(scanner.nextLine()));
+        Holiday holiday = academy.getHolidayById(scanner.nextInt());
         System.out.println("Name");
-        holiday.setName(scanner.nextLine());
+        holiday.setName(scanner.next());
         System.out.println("Date");
-        int year = parseInt(scanner.nextLine());
+        int year = scanner.nextInt();
         System.out.println("Month");
-        int month = parseInt(scanner.nextLine());
+        int month = scanner.nextInt();
         System.out.println("Day");
-        int day = parseInt(scanner.nextLine());
+        int day = scanner.nextInt();
         LocalDate date = LocalDate.of(year, month, day);
         holiday.setDate(date);
     }
 
     public void deleteHoliday(Academy academy, Scanner scanner) {
         System.out.println("Holiday id");
-        academy.deleteHolidayById(parseInt(scanner.nextLine()));
+        academy.deleteHolidayById(scanner.nextInt());
     }
 }

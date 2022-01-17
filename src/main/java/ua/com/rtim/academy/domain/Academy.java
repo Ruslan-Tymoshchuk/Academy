@@ -46,6 +46,10 @@ public class Academy {
         this.phone = phone;
     }
 
+    public List<Teacher> getAllTeachers() {
+        return teachers;
+    }
+
     public void addTeacher(Teacher teacher) {
         this.teachers.add(teacher);
     }
@@ -56,6 +60,10 @@ public class Academy {
 
     public void deleteTeacherById(int id) {
         teachers.remove(id);
+    }
+
+    public List<Student> getAllStudents() {
+        return students;
     }
 
     public void addStudent(Student student) {
@@ -70,6 +78,10 @@ public class Academy {
         students.remove(id);
     }
 
+    public List<Course> getAllCourses() {
+        return courses;
+    }
+
     public void addCourse(Course course) {
         this.courses.add(course);
     }
@@ -82,7 +94,7 @@ public class Academy {
         courses.remove(id);
     }
 
-    public List<Group> getGroups() {
+    public List<Group> getAllGroups() {
         return groups;
     }
 
@@ -98,7 +110,7 @@ public class Academy {
         groups.remove(id);
     }
 
-    public List<Holiday> getHolidays() {
+    public List<Holiday> getAllHolidays() {
         return holidays;
     }
 
@@ -114,7 +126,7 @@ public class Academy {
         holidays.remove(id);
     }
 
-    public List<Lesson> getLessons() {
+    public List<Lesson> getAllLessons() {
         return lessons;
     }
 
@@ -128,6 +140,10 @@ public class Academy {
 
     public void deleteLessonById(int id) {
         this.lessons.remove(id);
+    }
+
+    public List<Audience> getAllAudiences() {
+        return audiences;
     }
 
     public void addAudience(Audience audience) {

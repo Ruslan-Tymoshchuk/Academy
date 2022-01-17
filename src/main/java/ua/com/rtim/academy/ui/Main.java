@@ -15,7 +15,7 @@ public class Main {
                 + lineSeparator() + "g: Teacher");
         Scanner scanner = new Scanner(System.in);
         while (scanner.hasNext()) {
-            switch (scanner.nextLine()) {
+            switch (scanner.next()) {
             case "a":
                 new AudienceMenuItem(academy, scanner);
                 break;

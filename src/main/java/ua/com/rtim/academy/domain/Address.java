@@ -7,8 +7,8 @@ public class Address {
     private String region;
     private String city;
     private String street;
-    private Integer houseNumber;
-    private Integer index;
+    private String houseNumber;
+    private String postalCode;
 
     public Integer getId() {
         return id;
@@ -50,19 +50,19 @@ public class Address {
         this.street = street;
     }
 
-    public Integer getHouseNumber() {
+    public String getHouseNumber() {
         return houseNumber;
     }
 
-    public void setHouseNumber(Integer houseNumber) {
+    public void setHouseNumber(String houseNumber) {
         this.houseNumber = houseNumber;
     }
 
-    public Integer getIndex() {
-        return index;
+    public String getIndex() {
+        return postalCode;
     }
 
-    public void setIndex(Integer index) {
-        this.index = index;
+    public void setIndex(String index) {
+        this.postalCode = index;
     }
 }

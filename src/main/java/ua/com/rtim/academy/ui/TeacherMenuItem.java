@@ -1,6 +1,5 @@
 package ua.com.rtim.academy.ui;
 
-import static java.lang.Integer.parseInt;
 import static java.time.LocalDate.of;
 
 import java.time.LocalDate;
@@ -18,21 +17,24 @@ import ua.com.rtim.academy.domain.Vacation;
 public class TeacherMenuItem {
 
     public TeacherMenuItem(Academy academy, Scanner scanner) {
-        System.out.println("Teacher: a: Create, b: Add Vacation, c: Update, d: Update Address, e: Delete");
-        switch (scanner.nextLine()) {
+        System.out.println("Teacher: a: Find All, b: Create, c: Add Vacation, d: Update, e: Update Address, f: Delete");
+        switch (scanner.next()) {
         case "a":
-            createTeacher(academy, scanner);
+            findAllStudents(academy);
             break;
         case "b":
-            addTeacherVacation(academy, scanner);
+            createTeacher(academy, scanner);
             break;
         case "c":
-            updateTeacher(academy, scanner);
+            addTeacherVacation(academy, scanner);
             break;
         case "d":
-            updateTeacherAddress(academy, scanner);
+            updateTeacher(academy, scanner);
             break;
         case "e":
+            updateTeacherAddress(academy, scanner);
+            break;
+        case "f":
             deleteTeacher(academy, scanner);
             break;
         default:
@@ -40,34 +42,39 @@ public class TeacherMenuItem {
         }
     }
 
+    public void findAllStudents(Academy academy) {
+        List<Teacher> teachers = academy.getAllTeachers();
+        teachers.forEach(
+                teacher -> System.out.println(String.format("%s %s", teacher.getFirstName(), teacher.getLastName())));
+    }
+
     public void createTeacher(Academy academy, Scanner scanner) {
         Teacher teacher = new Teacher();
         System.out.println("First name");
-        teacher.setFirstName(scanner.nextLine());
+        teacher.setFirstName(scanner.next());
         System.out.println("Last name");
-        teacher.setLastName(scanner.nextLine());
-        GenderMenuItem genderMenuItem = new GenderMenuItem();
+        teacher.setLastName(scanner.next());
         System.out.println("Gender: Male, Female");
-        Gender gender = genderMenuItem.chooseGender(scanner.nextLine().toUpperCase());
+        Gender gender = Gender.valueOf(scanner.next().toUpperCase());
         teacher.setGender(gender);
         System.out.println("Birth:");
         teacher.setBirthDate(addDate(scanner));
         System.out.println("Phone number");
-        teacher.setPhone(scanner.nextLine());
+        teacher.setPhone(scanner.next());
         System.out.println("Mail");
-        teacher.setEmail(scanner.nextLine());
+        teacher.setEmail(scanner.next());
         AddressMenuItem addressMenuItem = new AddressMenuItem();
-        System.out.println("Address");
+        System.out.println("Address:");
         teacher.setAddress(addressMenuItem.addAddress(scanner));
         System.out.println("Academic degree: Bachelor, Master, Doctoral");
-        AcademicDegree academicDegree = chooseAcademicDegree(scanner.nextLine().toUpperCase());
+        AcademicDegree academicDegree = AcademicDegree.valueOf(scanner.next().toUpperCase());
         teacher.setAcademicDegree(academicDegree);
         academy.addTeacher(teacher);
     }
 
     public void addTeacherVacation(Academy academy, Scanner scanner) {
         System.out.println("Teacher id");
-        Teacher teacher = academy.getTeacherById(parseInt(scanner.nextLine()));
+        Teacher teacher = academy.getTeacherById(scanner.nextInt());
         Vacation vacation = new Vacation();
         System.out.println("Start date");
         vacation.setStartDate(addDate(scanner));
@@ -80,23 +87,23 @@ public class TeacherMenuItem {
 
     public void updateTeacher(Academy academy, Scanner scanner) {
         System.out.println("Teacher id");
-        Teacher teacher = academy.getTeacherById(parseInt(scanner.nextLine()));
+        Teacher teacher = academy.getTeacherById(scanner.nextInt());
         System.out.println("First name");
-        teacher.setFirstName(scanner.nextLine());
+        teacher.setFirstName(scanner.next());
         System.out.println("Last name");
-        teacher.setLastName(scanner.nextLine());
+        teacher.setLastName(scanner.next());
         System.out.println("Phone number");
-        teacher.setPhone(scanner.nextLine());
+        teacher.setPhone(scanner.next());
         System.out.println("Mail");
-        teacher.setEmail(scanner.nextLine());
+        teacher.setEmail(scanner.next());
         System.out.println("Academic degree: Bachelor, Master, Doctoral");
-        AcademicDegree academicDegree = chooseAcademicDegree(scanner.nextLine().toUpperCase());
+        AcademicDegree academicDegree = AcademicDegree.valueOf(scanner.next().toUpperCase());
         teacher.setAcademicDegree(academicDegree);
     }
 
     public void updateTeacherAddress(Academy academy, Scanner scanner) {
         System.out.println("Teacher id");
-        Teacher teacher = academy.getTeacherById(parseInt(scanner.nextLine()));
+        Teacher teacher = academy.getTeacherById(scanner.nextInt());
         System.out.println("Address");
         Address address = teacher.getAddress();
         AddressMenuItem addressMenuItem = new AddressMenuItem();
@@ -106,29 +113,16 @@ public class TeacherMenuItem {
 
     public void deleteTeacher(Academy academy, Scanner scanner) {
         System.out.println("Teacher id");
-        academy.deleteTeacherById(parseInt(scanner.nextLine()));
+        academy.deleteTeacherById(scanner.nextInt());
     }
 
     private LocalDate addDate(Scanner scanner) {
         System.out.println("Year");
-        int year = parseInt(scanner.nextLine());
+        int year = scanner.nextInt();
         System.out.println("Month");
-        int month = parseInt(scanner.nextLine());
+        int month = scanner.nextInt();
         System.out.println("Day");
-        int day = parseInt(scanner.nextLine());
+        int day = scanner.nextInt();
         return of(year, month, day);
-    }
-
-    public AcademicDegree chooseAcademicDegree(String text) {
-        switch (text) {
-        case "BACHELOR":
-            return AcademicDegree.valueOf(text);
-        case "MASTER":
-            return AcademicDegree.valueOf(text);
-        case "DOCTORAL":
-            return AcademicDegree.valueOf(text);
-        default:
-            return AcademicDegree.UNKNOWN;
-        }
     }
 }
