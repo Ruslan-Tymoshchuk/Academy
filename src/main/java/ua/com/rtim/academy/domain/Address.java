@@ -1,5 +1,7 @@
 package ua.com.rtim.academy.domain;
 
+import java.util.Objects;
+
 public class Address {
 
     private Integer id;
@@ -58,11 +60,31 @@ public class Address {
         this.houseNumber = houseNumber;
     }
 
-    public String getIndex() {
+    public String postalCode() {
         return postalCode;
     }
 
-    public void setIndex(String index) {
+    public void setPostalCode(String index) {
         this.postalCode = index;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(city, country, houseNumber, id, postalCode, region, street);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Address other = (Address) obj;
+        return Objects.equals(city, other.city) && Objects.equals(country, other.country)
+                && Objects.equals(houseNumber, other.houseNumber) && Objects.equals(id, other.id)
+                && Objects.equals(postalCode, other.postalCode) && Objects.equals(region, other.region)
+                && Objects.equals(street, other.street);
     }
 }

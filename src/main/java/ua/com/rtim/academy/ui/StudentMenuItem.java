@@ -6,48 +6,57 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
-import ua.com.rtim.academy.domain.Academy;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Gender;
 import ua.com.rtim.academy.domain.Group;
 import ua.com.rtim.academy.domain.Student;
+import ua.com.rtim.academy.spring.dao.AddressDao;
+import ua.com.rtim.academy.spring.dao.GroupDao;
+import ua.com.rtim.academy.spring.dao.StudentDao;
 
 public class StudentMenuItem {
 
-    public StudentMenuItem(Academy academy, Scanner scanner) {
+    private final StudentDao studentDao;
+    private final AddressDao addressDao;
+    private final GroupDao groupDao;
+
+    public StudentMenuItem(StudentDao studentDao, AddressDao addressDao, GroupDao groupDao, Scanner scanner) {
         System.out.println(
                 "Student: a: Find All, b: Create, c: Update, d: Update Address, e: Set Group For the student, f: Delete");
+        this.studentDao = studentDao;
+        this.addressDao = addressDao;
+        this.groupDao = groupDao;
         switch (scanner.next()) {
         case "a":
-            findAllStudents(academy);
+            findAllStudents();
             break;
         case "b":
-            createStudent(academy, scanner);
+            createStudent(scanner);
             break;
         case "c":
-            updateStudent(academy, scanner);
+            updateStudent(scanner);
             break;
         case "d":
-            updateStudentAddress(academy, scanner);
+            updateStudentAddress(scanner);
             break;
         case "e":
-            addStudentToGroup(academy, scanner);
+            addStudentToGroup(scanner);
             break;
         case "f":
-            deleteStudent(academy, scanner);
+            deleteStudent(scanner);
             break;
         default:
             break;
         }
     }
 
-    public void findAllStudents(Academy academy) {
-        List<Student> students = academy.getAllStudents();
+    public void findAllStudents() {
+        List<Student> students = studentDao.findAll();
         students.forEach(
                 student -> System.out.println(String.format("%s %s", student.getFirstName(), student.getLastName())));
     }
 
-    public void createStudent(Academy academy, Scanner scanner) {
+    public void createStudent(Scanner scanner) {
         Student student = new Student();
         System.out.println("First name");
         student.setFirstName(scanner.next());
@@ -71,14 +80,14 @@ public class StudentMenuItem {
         student.setEmail(scanner.next());
         System.out.println("Address:");
         AddressMenuItem addressMenuItem = new AddressMenuItem();
-        Address address = addressMenuItem.addAddress(scanner);
+        Address address = addressMenuItem.addAddress(addressDao, scanner);
         student.setAddress(address);
-        academy.addStudent(student);
+        studentDao.create(student);
     }
 
-    public void updateStudent(Academy academy, Scanner scanner) {
+    public void updateStudent(Scanner scanner) {
         System.out.println("Student id");
-        Student student = academy.getStudentById(scanner.nextInt());
+        Student student = studentDao.getById(scanner.nextInt()).get();
         System.out.println("First name");
         student.setFirstName(scanner.next());
         System.out.println("Last name");
@@ -87,28 +96,30 @@ public class StudentMenuItem {
         student.setPhone(scanner.next());
         System.out.println("Mail");
         student.setEmail(scanner.next());
+        studentDao.update(student);
     }
 
-    public void updateStudentAddress(Academy academy, Scanner scanner) {
+    public void updateStudentAddress(Scanner scanner) {
         System.out.println("Student id");
-        Student student = academy.getStudentById(scanner.nextInt());
+        Student student = studentDao.getById(scanner.nextInt()).get();
         System.out.println("Address");
         Address address = student.getAddress();
         AddressMenuItem addressMenuItem = new AddressMenuItem();
-        addressMenuItem.updateAddress(address, scanner);
+        addressMenuItem.updateAddress(addressDao, address, scanner);
         student.setAddress(address);
     }
 
-    public void addStudentToGroup(Academy academy, Scanner scanner) {
+    public void addStudentToGroup(Scanner scanner) {
         System.out.println("Student id");
-        Student student = academy.getStudentById(scanner.nextInt());
+        Student student = studentDao.getById(scanner.nextInt()).get();
         System.out.println("Group id");
-        Group group = academy.getGroupById(scanner.nextInt());
+        Group group = groupDao.getById(scanner.nextInt()).get();
         student.setGroup(group);
+        studentDao.addToGroup(group, student);
     }
 
-    public void deleteStudent(Academy academy, Scanner scanner) {
+    public void deleteStudent(Scanner scanner) {
         System.out.println("Student id");
-        academy.deleteStudentById(scanner.nextInt());
+        studentDao.delete(scanner.nextInt());
     }
 }

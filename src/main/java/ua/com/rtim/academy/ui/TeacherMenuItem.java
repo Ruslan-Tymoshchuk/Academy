@@ -3,52 +3,60 @@ package ua.com.rtim.academy.ui;
 import static java.time.LocalDate.of;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 import ua.com.rtim.academy.domain.AcademicDegree;
-import ua.com.rtim.academy.domain.Academy;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Gender;
 import ua.com.rtim.academy.domain.Teacher;
 import ua.com.rtim.academy.domain.Vacation;
+import ua.com.rtim.academy.spring.dao.AddressDao;
+import ua.com.rtim.academy.spring.dao.TeacherDao;
+import ua.com.rtim.academy.spring.dao.VacationDao;
 
 public class TeacherMenuItem {
 
-    public TeacherMenuItem(Academy academy, Scanner scanner) {
+    private final TeacherDao teacherDao;
+    private final VacationDao vacationDao;
+    private final AddressDao addressDao;
+
+    public TeacherMenuItem(TeacherDao teacherDao, VacationDao vacationDao, AddressDao addressDao, Scanner scanner) {
         System.out.println("Teacher: a: Find All, b: Create, c: Add Vacation, d: Update, e: Update Address, f: Delete");
+        this.teacherDao = teacherDao;
+        this.vacationDao = vacationDao;
+        this.addressDao = addressDao;
         switch (scanner.next()) {
         case "a":
-            findAllStudents(academy);
+            findAllTeachers();
             break;
         case "b":
-            createTeacher(academy, scanner);
+            createTeacher(scanner);
             break;
         case "c":
-            addTeacherVacation(academy, scanner);
+            addTeacherVacation(scanner);
             break;
         case "d":
-            updateTeacher(academy, scanner);
+            updateTeacher(scanner);
             break;
         case "e":
-            updateTeacherAddress(academy, scanner);
+            updateTeacherAddress(scanner);
             break;
         case "f":
-            deleteTeacher(academy, scanner);
+            deleteTeacher(scanner);
             break;
         default:
             break;
         }
     }
 
-    public void findAllStudents(Academy academy) {
-        List<Teacher> teachers = academy.getAllTeachers();
+    public void findAllTeachers() {
+        List<Teacher> teachers = teacherDao.findAll();
         teachers.forEach(
                 teacher -> System.out.println(String.format("%s %s", teacher.getFirstName(), teacher.getLastName())));
     }
 
-    public void createTeacher(Academy academy, Scanner scanner) {
+    public void createTeacher(Scanner scanner) {
         Teacher teacher = new Teacher();
         System.out.println("First name");
         teacher.setFirstName(scanner.next());
@@ -65,29 +73,27 @@ public class TeacherMenuItem {
         teacher.setEmail(scanner.next());
         AddressMenuItem addressMenuItem = new AddressMenuItem();
         System.out.println("Address:");
-        teacher.setAddress(addressMenuItem.addAddress(scanner));
+        teacher.setAddress(addressMenuItem.addAddress(addressDao, scanner));
         System.out.println("Academic degree: Bachelor, Master, Doctoral");
         AcademicDegree academicDegree = AcademicDegree.valueOf(scanner.next().toUpperCase());
         teacher.setAcademicDegree(academicDegree);
-        academy.addTeacher(teacher);
+        teacherDao.create(teacher);
     }
 
-    public void addTeacherVacation(Academy academy, Scanner scanner) {
+    public void addTeacherVacation(Scanner scanner) {
         System.out.println("Teacher id");
-        Teacher teacher = academy.getTeacherById(scanner.nextInt());
+        Teacher teacher = teacherDao.getById(scanner.nextInt()).get();
         Vacation vacation = new Vacation();
         System.out.println("Start date");
         vacation.setStartDate(addDate(scanner));
         System.out.println("End date");
         vacation.setEndDate(addDate(scanner));
-        List<Vacation> vacations = new ArrayList<>();
-        vacations.add(vacation);
-        teacher.setVacations(vacations);
+        vacationDao.addTeacherVacation(vacation, teacher);
     }
 
-    public void updateTeacher(Academy academy, Scanner scanner) {
+    public void updateTeacher(Scanner scanner) {
         System.out.println("Teacher id");
-        Teacher teacher = academy.getTeacherById(scanner.nextInt());
+        Teacher teacher = teacherDao.getById(scanner.nextInt()).get();
         System.out.println("First name");
         teacher.setFirstName(scanner.next());
         System.out.println("Last name");
@@ -99,21 +105,22 @@ public class TeacherMenuItem {
         System.out.println("Academic degree: Bachelor, Master, Doctoral");
         AcademicDegree academicDegree = AcademicDegree.valueOf(scanner.next().toUpperCase());
         teacher.setAcademicDegree(academicDegree);
+        teacherDao.update(teacher);
     }
 
-    public void updateTeacherAddress(Academy academy, Scanner scanner) {
+    public void updateTeacherAddress(Scanner scanner) {
         System.out.println("Teacher id");
-        Teacher teacher = academy.getTeacherById(scanner.nextInt());
+        Teacher teacher = teacherDao.getById(scanner.nextInt()).get();
         System.out.println("Address");
         Address address = teacher.getAddress();
         AddressMenuItem addressMenuItem = new AddressMenuItem();
-        addressMenuItem.updateAddress(address, scanner);
-        teacher.setAddress(address);
+        addressMenuItem.updateAddress(addressDao, address, scanner);
+        addressDao.update(address);
     }
 
-    public void deleteTeacher(Academy academy, Scanner scanner) {
+    public void deleteTeacher(Scanner scanner) {
         System.out.println("Teacher id");
-        academy.deleteTeacherById(scanner.nextInt());
+        teacherDao.delete(scanner.nextInt());
     }
 
     private LocalDate addDate(Scanner scanner) {

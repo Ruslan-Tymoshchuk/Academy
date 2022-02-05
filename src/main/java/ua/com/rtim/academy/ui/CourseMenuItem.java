@@ -3,56 +3,60 @@ package ua.com.rtim.academy.ui;
 import java.util.List;
 import java.util.Scanner;
 
-import ua.com.rtim.academy.domain.Academy;
 import ua.com.rtim.academy.domain.Course;
+import ua.com.rtim.academy.spring.dao.CourseDao;
 
 public class CourseMenuItem {
 
-    public CourseMenuItem(Academy academy, Scanner scanner) {
+    private final CourseDao courseDao;
+
+    public CourseMenuItem(CourseDao courseDao, Scanner scanner) {
         System.out.println("Course: a: Find All, b: Create, c: Update, d: Delete");
+        this.courseDao = courseDao;
         switch (scanner.next()) {
         case "a":
-            findAllCourses(academy);
+            findAllCourses();
             break;
         case "b":
-            createCourse(academy, scanner);
+            createCourse(scanner);
             break;
         case "c":
-            updateCourse(academy, scanner);
+            updateCourse(scanner);
             break;
         case "d":
-            deleteCourse(academy, scanner);
+            deleteCourse(scanner);
             break;
         default:
             break;
         }
     }
 
-    public void findAllCourses(Academy academy) {
-        List<Course> courses = academy.getAllCourses();
+    public void findAllCourses() {
+        List<Course> courses = courseDao.findAll();
         courses.forEach(course -> System.out.println(course.getName()));
     }
 
-    private void createCourse(Academy academy, Scanner scanner) {
+    private void createCourse(Scanner scanner) {
         Course course = new Course();
         System.out.println("Name");
         course.setName(scanner.next());
         System.out.println("Description");
         course.setDescription(scanner.next());
-        academy.addCourse(course);
+        courseDao.create(course);
     }
 
-    private void updateCourse(Academy academy, Scanner scanner) {
+    private void updateCourse(Scanner scanner) {
         System.out.println("Course id");
-        Course course = academy.getCourseById(scanner.nextInt());
+        Course course = courseDao.getById(scanner.nextInt()).get();
         System.out.println("Name");
         course.setName(scanner.next());
         System.out.println("Description");
         course.setDescription(scanner.next());
+        courseDao.update(course);
     }
 
-    private void deleteCourse(Academy academy, Scanner scanner) {
+    private void deleteCourse(Scanner scanner) {
         System.out.println("Course id");
-        academy.deleteCourseById(scanner.nextInt());
+        courseDao.delete(scanner.nextInt());
     }
 }

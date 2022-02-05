@@ -3,6 +3,7 @@ package ua.com.rtim.academy.domain;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Teacher {
 
@@ -104,5 +105,25 @@ public class Teacher {
 
     public void setVacations(List<Vacation> vacations) {
         this.vacations = vacations;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(academicDegree, address, birthDate, email, firstName, gender, id, lastName, phone);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Teacher other = (Teacher) obj;
+        return academicDegree == other.academicDegree && Objects.equals(address, other.address)
+                && Objects.equals(birthDate, other.birthDate) && Objects.equals(email, other.email)
+                && Objects.equals(firstName, other.firstName) && gender == other.gender && Objects.equals(id, other.id)
+                && Objects.equals(lastName, other.lastName) && Objects.equals(phone, other.phone);
     }
 }
