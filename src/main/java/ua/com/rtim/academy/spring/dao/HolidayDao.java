@@ -1,12 +1,7 @@
 package ua.com.rtim.academy.spring.dao;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -17,20 +12,21 @@ public class HolidayDao implements CrudRepository<Holiday> {
 
     public static final String GET_ALL_HOLIDAYS_QUERY = "SELECT * FROM holidays";
     public static final String ADD_NEW_HOLIDAY_QUERY = "INSERT INTO holidays(name, date) VALUES (?, ?)";
-    public static final String GET_HOLIDAY_BY_ID_QUERY = "SELECT * FROM holidays WHERE holiday_id = ?";
-    public static final String UPDATE_HOLIDAY_QUERY = "UPDATE holidays SET name = ?, date = ? WHERE holiday_id = ?";
-    public static final String DELETE_HOLIDAY_BY_ID_QUERY = "DELETE FROM holidays WHERE holiday_id = ?";
+    public static final String GET_HOLIDAY_BY_ID_QUERY = "SELECT * FROM holidays WHERE id = ?";
+    public static final String UPDATE_HOLIDAY_QUERY = "UPDATE holidays SET name = ?, date = ? WHERE id = ?";
+    public static final String DELETE_HOLIDAY_BY_ID_QUERY = "DELETE FROM holidays WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
+    private final HolidayMapper holidayMapper;
 
-    @Autowired
-    public HolidayDao(JdbcTemplate jdbcTemplate) {
+    public HolidayDao(JdbcTemplate jdbcTemplate, HolidayMapper holidayMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.holidayMapper = holidayMapper;
     }
 
     @Override
     public List<Holiday> findAll() {
-        return jdbcTemplate.query(GET_ALL_HOLIDAYS_QUERY, (resultSet, rows) -> mapToHoliday(resultSet));
+        return jdbcTemplate.query(GET_ALL_HOLIDAYS_QUERY, holidayMapper);
     }
 
     @Override
@@ -39,9 +35,8 @@ public class HolidayDao implements CrudRepository<Holiday> {
     }
 
     @Override
-    public Optional<Holiday> getById(int id) {
-        return Optional.of(
-                jdbcTemplate.queryForObject(GET_HOLIDAY_BY_ID_QUERY, (resultSet, rows) -> mapToHoliday(resultSet), id));
+    public Holiday getById(int id) {
+        return jdbcTemplate.queryForObject(GET_HOLIDAY_BY_ID_QUERY, holidayMapper, id);
     }
 
     @Override
@@ -52,13 +47,5 @@ public class HolidayDao implements CrudRepository<Holiday> {
     @Override
     public void delete(int id) {
         jdbcTemplate.update(DELETE_HOLIDAY_BY_ID_QUERY, id);
-    }
-
-    private Holiday mapToHoliday(ResultSet resultSet) throws SQLException {
-        Holiday holiday = new Holiday();
-        holiday.setId(resultSet.getInt("holiday_id"));
-        holiday.setName(resultSet.getString("name"));
-        holiday.setDate(resultSet.getObject(3, LocalDate.class));
-        return holiday;
     }
 }

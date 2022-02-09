@@ -47,7 +47,7 @@ public class CourseMenuItem {
 
     private void updateCourse(Scanner scanner) {
         System.out.println("Course id");
-        Course course = courseDao.getById(scanner.nextInt()).get();
+        Course course = courseDao.getById(scanner.nextInt());
         System.out.println("Name");
         course.setName(scanner.next());
         System.out.println("Description");

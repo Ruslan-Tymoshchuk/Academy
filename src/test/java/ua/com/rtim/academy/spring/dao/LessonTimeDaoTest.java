@@ -37,8 +37,9 @@ class LessonTimeDaoTest {
         LessonTime lessonTime = new LessonTime();
         lessonTime.setStartTime(LocalTime.of(8, 20));
         lessonTime.setEndTime(LocalTime.of(9, 40));
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lessons_times");
         lessonTimeDao.create(lessonTime);
-        assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "lessons_times"));
+        assertEquals(rows + 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "lessons_times"));
     }
 
     @Test
@@ -47,21 +48,22 @@ class LessonTimeDaoTest {
         expected.setId(3);
         expected.setStartTime(LocalTime.of(10, 40));
         expected.setEndTime(LocalTime.of(11, 20));
-        assertEquals(expected, lessonTimeDao.getById(3).get());
+        assertEquals(expected, lessonTimeDao.getById(3));
     }
 
     @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        LessonTime expected = lessonTimeDao.getById(3).get();
+        LessonTime expected = lessonTimeDao.getById(3);
         expected.setStartTime(LocalTime.of(11, 40));
         expected.setEndTime(LocalTime.of(12, 20));
         lessonTimeDao.update(expected);
-        assertEquals(expected, lessonTimeDao.getById(3).get());
+        assertEquals(expected, lessonTimeDao.getById(3));
     }
 
     @Test
     void delete_shouldBeRemoveEntity_fromTheDataBase() {
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "lessons_times");
         lessonTimeDao.delete(4);
-        assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "lessons_times"));
+        assertEquals(rows - 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "lessons_times"));
     }
 }

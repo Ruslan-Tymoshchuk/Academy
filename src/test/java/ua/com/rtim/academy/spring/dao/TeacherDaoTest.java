@@ -53,15 +53,50 @@ class TeacherDaoTest {
     }
 
     @Test
+    void getById_shouldBeGetEntity_fromTheDataBase() {
+        Teacher expected = new Teacher();
+        expected.setId(1);
+        expected.setFirstName("FName1");
+        expected.setLastName("LName1");
+        expected.setGender(Gender.valueOf("MALE"));
+        expected.setBirthDate(LocalDate.of(1980, 1, 1));
+        expected.setPhone("12345678");
+        expected.setEmail("mail");
+        Address address = new Address();
+        address.setId(1);
+        address.setCountry("Ukraine");
+        address.setRegion("Kyivska");
+        address.setCity("Kyiv");
+        address.setStreet("Velika Vasilkivska");
+        address.setHouseNumber("114");
+        address.setPostalCode("020590");
+        expected.setAddress(address);
+        expected.setAcademicDegree(AcademicDegree.valueOf("BACHELOR"));
+        assertEquals(expected, teacherDao.getById(1));
+    }
+
+    @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        Teacher teacher = teacherDao.getById(3).get();
-        teacher.setFirstName("TestName");
-        teacher.setLastName("TestLastName");
-        teacher.setPhone("+380504442277");
-        teacher.setEmail("test@gamil.com");
-        teacher.setAcademicDegree(AcademicDegree.valueOf("MASTER"));
-        teacherDao.update(teacher);
-        assertEquals(teacher, teacherDao.getById(3).get());
+        Teacher expected = new Teacher();
+        expected.setId(1);
+        expected.setFirstName("TestName");
+        expected.setLastName("TestLastName");
+        expected.setGender(Gender.valueOf("MALE"));
+        expected.setBirthDate(LocalDate.of(1980, 1, 1));
+        expected.setPhone("+380504442277");
+        expected.setEmail("test@gamil.com");
+        Address address = new Address();
+        address.setId(1);
+        address.setCountry("Ukraine");
+        address.setRegion("Kyivska");
+        address.setCity("Kyiv");
+        address.setStreet("Velika Vasilkivska");
+        address.setHouseNumber("114");
+        address.setPostalCode("020590");
+        expected.setAddress(address);
+        expected.setAcademicDegree(AcademicDegree.valueOf("MASTER"));
+        teacherDao.update(expected);
+        assertEquals(expected, teacherDao.getById(1));
     }
 
     @Test

@@ -37,8 +37,9 @@ class HolidayDaoTest {
         Holiday holiday = new Holiday();
         holiday.setName("New Year");
         holiday.setDate(LocalDate.of(2021, 12, 31));
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Holidays");
         holidayDao.create(holiday);
-        assertEquals(4, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Holidays"));
+        assertEquals(rows + 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Holidays"));
     }
 
     @Test
@@ -47,21 +48,22 @@ class HolidayDaoTest {
         expected.setId(3);
         expected.setName("Holiday3");
         expected.setDate(LocalDate.of(2022, 3, 3));
-        assertEquals(expected, holidayDao.getById(3).get());
+        assertEquals(expected, holidayDao.getById(3));
     }
 
     @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        Holiday expected = holidayDao.getById(3).get();
+        Holiday expected = holidayDao.getById(3);
         expected.setName("Test");
         expected.setDate(LocalDate.of(2022, 4, 4));
         holidayDao.update(expected);
-        assertEquals(expected, holidayDao.getById(3).get());
+        assertEquals(expected, holidayDao.getById(3));
     }
 
     @Test
     void delete_shouldBeRemoveEntity_fromTheDataBase() {
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Holidays");
         holidayDao.delete(3);
-        assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Holidays"));
+        assertEquals(rows - 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Holidays"));
     }
 }

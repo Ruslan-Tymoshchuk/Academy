@@ -15,6 +15,7 @@ import org.springframework.test.jdbc.JdbcTestUtils;
 
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Gender;
+import ua.com.rtim.academy.domain.Group;
 import ua.com.rtim.academy.domain.Student;
 import ua.com.rtim.academy.spring.config.AppConfig;
 
@@ -26,8 +27,6 @@ class StudentDaoTest {
 
     @Autowired
     private StudentDao studentDao;
-    @Autowired
-    private GroupDao groupDao;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -48,31 +47,71 @@ class StudentDaoTest {
         Address address = new Address();
         address.setId(1);
         student.setAddress(address);
+        Group group = new Group();
+        group.setId(3);
+        student.setGroup(group);
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Students");
         studentDao.create(student);
-        assertEquals(4, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Students"));
+        assertEquals(rows + 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Students"));
+    }
+
+    @Test
+    void getById_shouldBeGetEntity_fromTheDataBase() {
+        Student expected = new Student();
+        expected.setId(1);
+        expected.setFirstName("FName1");
+        expected.setLastName("LName1");
+        expected.setGender(Gender.valueOf("MALE"));
+        expected.setBirthDate(LocalDate.of(1980, 1, 1));
+        expected.setPhone("12345678");
+        expected.setEmail("mail");
+        Address address = new Address();
+        address.setId(1);
+        address.setCountry("Ukraine");
+        address.setRegion("Kyivska");
+        address.setCity("Kyiv");
+        address.setStreet("Velika Vasilkivska");
+        address.setHouseNumber("114");
+        address.setPostalCode("020590");
+        expected.setAddress(address);
+        Group group = new Group();
+        group.setId(1);
+        group.setName("MM-13");
+        expected.setGroup(group);
+        assertEquals(expected, studentDao.getById(1));
     }
 
     @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        Student student = studentDao.getById(3).get();
-        student.setFirstName("TestName");
-        student.setLastName("TestLastName");
-        student.setPhone("+380504442277");
-        student.setEmail("test@gamil.com");
-        studentDao.update(student);
-        assertEquals(student, studentDao.getById(3).get());
+        Student expected = new Student();
+        expected.setId(3);
+        expected.setFirstName("FName");
+        expected.setLastName("LName");
+        expected.setGender(Gender.valueOf("MALE"));
+        expected.setBirthDate(LocalDate.of(1990, 07, 07));
+        expected.setPhone("+380504442233");
+        expected.setEmail("name@gamil.com");
+        Address address = new Address();
+        address.setId(3);
+        address.setCountry("Ukraine");
+        address.setRegion("Kyivska");
+        address.setCity("Kyiv");
+        address.setStreet("Velika Vasilkivska");
+        address.setHouseNumber("116");
+        address.setPostalCode("020590");
+        expected.setAddress(address);
+        Group group = new Group();
+        group.setId(3);
+        group.setName("MM-15");
+        expected.setGroup(group);
+        studentDao.update(expected);
+        assertEquals(expected, studentDao.getById(3));
     }
 
     @Test
     void delete_shouldBeRemoveEntity_fromTheDataBase() {
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Students");
         studentDao.delete(3);
-        assertEquals(2, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Students"));
-    }
-
-    @Test
-    void shouldBeAdd_studentToGroup_inTheDataBase() {
-        studentDao.addToGroup(groupDao.getById(3).get(), studentDao.getById(3).get());
-        Student student = studentDao.getById(3).get();
-        assertEquals(3, student.getGroup().getId());
+        assertEquals(rows - 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Students"));
     }
 }

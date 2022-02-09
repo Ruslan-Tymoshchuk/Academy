@@ -39,8 +39,9 @@ class AddressDaoTest {
         address.setStreet("Velika Vasilkivska");
         address.setHouseNumber("114");
         address.setPostalCode("020590");
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Addresses");
         addressDao.create(address);
-        assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Addresses"));
+        assertEquals(rows + 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Addresses"));
     }
 
     @Test
@@ -53,21 +54,27 @@ class AddressDaoTest {
         expected.setStreet("Velika Vasilkivska");
         expected.setHouseNumber("116");
         expected.setPostalCode("020590");
-        assertEquals(expected, addressDao.getById(3).get());
+        assertEquals(expected, addressDao.getById(3));
     }
 
     @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        Address expected = addressDao.getById(3).get();
-        expected.setStreet("Kovpaka");
-        expected.setHouseNumber("15");
+        Address expected = new Address();
+        expected.setId(3);
+        expected.setCountry("Ukraine");
+        expected.setRegion("Kyivska");
+        expected.setCity("Kyiv");
+        expected.setStreet("Velika Vasilkivska");
+        expected.setHouseNumber("116");
+        expected.setPostalCode("020590");
         addressDao.update(expected);
-        assertEquals(expected, addressDao.getById(3).get());
+        assertEquals(expected, addressDao.getById(3));
     }
 
     @Test
     void delete_shouldBeRemoveEntity_fromTheDataBase() {
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Addresses");
         addressDao.delete(4);
-        assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Addresses"));
+        assertEquals(rows - 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Addresses"));
     }
 }

@@ -1,7 +1,6 @@
 package ua.com.rtim.academy.spring.dao;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CrudRepository<T> {
 
@@ -9,7 +8,7 @@ public interface CrudRepository<T> {
 
     void create(T entity);
 
-    Optional<T> getById(int id);
+    T getById(int id);
 
     void update(T entity);
 

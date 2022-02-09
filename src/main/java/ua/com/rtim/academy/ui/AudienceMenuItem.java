@@ -47,7 +47,7 @@ public class AudienceMenuItem {
 
     private void updateAudience(Scanner scanner) {
         System.out.println("Aduence id");
-        Audience audience = audienceDao.getById(scanner.nextInt()).get();
+        Audience audience = audienceDao.getById(scanner.nextInt());
         System.out.println("Number");
         audience.setNumber(scanner.nextInt());
         System.out.println("Capacity");

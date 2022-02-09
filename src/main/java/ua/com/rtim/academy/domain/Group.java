@@ -8,6 +8,7 @@ public class Group {
     private Integer id;
     private String name;
     private List<Student> students;
+    private List<Lesson> lessons;
 
     public Integer getId() {
         return id;
@@ -31,6 +32,14 @@ public class Group {
 
     public void setStudents(List<Student> students) {
         this.students = students;
+    }
+
+    public List<Lesson> getLessons() {
+        return lessons;
+    }
+
+    public void setLessons(List<Lesson> lessons) {
+        this.lessons = lessons;
     }
 
     @Override

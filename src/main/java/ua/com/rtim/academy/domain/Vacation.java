@@ -6,6 +6,7 @@ import java.util.Objects;
 public class Vacation {
 
     private Integer id;
+    private Teacher teacher;
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -15,6 +16,14 @@ public class Vacation {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
     }
 
     public LocalDate getStartDate() {

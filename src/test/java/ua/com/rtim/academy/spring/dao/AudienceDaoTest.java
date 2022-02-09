@@ -35,8 +35,9 @@ class AudienceDaoTest {
         Audience audience = new Audience();
         audience.setNumber(234);
         audience.setCapacity(25);
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Audiences");
         audienceDao.create(audience);
-        assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Audiences"));
+        assertEquals(rows + 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Audiences"));
     }
 
     @Test
@@ -45,21 +46,22 @@ class AudienceDaoTest {
         expected.setId(3);
         expected.setNumber(125);
         expected.setCapacity(20);
-        assertEquals(expected, audienceDao.getById(3).get());
+        assertEquals(expected, audienceDao.getById(3));
     }
 
     @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        Audience expected = audienceDao.getById(3).get();
+        Audience expected = audienceDao.getById(3);
         expected.setNumber(25);
         expected.setCapacity(30);
         audienceDao.update(expected);
-        assertEquals(expected, audienceDao.getById(3).get());
+        assertEquals(expected, audienceDao.getById(3));
     }
 
     @Test
     void delete_shouldBeRemoveEntity_fromTheDataBase() {
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Audiences");
         audienceDao.delete(4);
-        assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Audiences"));
+        assertEquals(rows - 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Audiences"));
     }
 }

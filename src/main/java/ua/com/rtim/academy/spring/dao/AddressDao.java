@@ -1,12 +1,8 @@
 package ua.com.rtim.academy.spring.dao;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -18,23 +14,24 @@ import ua.com.rtim.academy.domain.Address;
 public class AddressDao implements CrudRepository<Address> {
 
     public static final String GET_ALL_ADDRESSES_QUERY = "SELECT * FROM addresses";
-    public static final String ADD_NEW_ADDRESS_QUERY = "INSERT INTO addresses(country, region, city, street, houseNumber, postalCode) "
+    public static final String ADD_NEW_ADDRESS_QUERY = "INSERT INTO addresses(country, region, city, street, house_number, postal_code) "
             + "VALUES (?, ?, ?, ?, ?, ?)";
-    public static final String GET_ADDRESS_BY_ID_QUERY = "SELECT * FROM addresses WHERE address_id = ?";
+    public static final String GET_ADDRESS_BY_ID_QUERY = "SELECT * FROM addresses WHERE id = ?";
     public static final String UPDATE_ADDRESS_QUERY = "UPDATE addresses SET "
-            + "country = ?, region = ?, city = ?, street = ?, houseNumber = ?, postalCode = ? WHERE address_id = ?";
-    public static final String DELETE_ADDRESS_BY_ID_QUERY = "DELETE FROM addresses WHERE address_id = ?";
+            + "country = ?, region = ?, city = ?, street = ?, house_number = ?, postal_code = ? WHERE id = ?";
+    public static final String DELETE_ADDRESS_BY_ID_QUERY = "DELETE FROM addresses WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
+    private final AddressMapper addressMapper;
 
-    @Autowired
-    public AddressDao(JdbcTemplate jdbcTemplate) {
+    public AddressDao(JdbcTemplate jdbcTemplate, AddressMapper addressMapper) {
         this.jdbcTemplate = jdbcTemplate;
+        this.addressMapper = addressMapper;
     }
 
     @Override
     public List<Address> findAll() {
-        return jdbcTemplate.query(GET_ALL_ADDRESSES_QUERY, (resultSet, rows) -> mapToAddress(resultSet));
+        return jdbcTemplate.query(GET_ALL_ADDRESSES_QUERY, new AddressMapper());
     }
 
     @Override
@@ -42,7 +39,7 @@ public class AddressDao implements CrudRepository<Address> {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(ADD_NEW_ADDRESS_QUERY,
-                    new String[] { "address_id" });
+                    new String[] { "id" });
             statement.setString(1, address.getCountry());
             statement.setString(2, address.getRegion());
             statement.setString(3, address.getCity());
@@ -55,9 +52,8 @@ public class AddressDao implements CrudRepository<Address> {
     }
 
     @Override
-    public Optional<Address> getById(int id) {
-        return Optional.of(
-                jdbcTemplate.queryForObject(GET_ADDRESS_BY_ID_QUERY, (resultSet, rows) -> mapToAddress(resultSet), id));
+    public Address getById(int id) {
+        return jdbcTemplate.queryForObject(GET_ADDRESS_BY_ID_QUERY, addressMapper, id);
     }
 
     @Override
@@ -69,17 +65,5 @@ public class AddressDao implements CrudRepository<Address> {
     @Override
     public void delete(int id) {
         jdbcTemplate.update(DELETE_ADDRESS_BY_ID_QUERY, id);
-    }
-
-    public Address mapToAddress(ResultSet resultSet) throws SQLException {
-        Address address = new Address();
-        address.setId(resultSet.getInt("address_id"));
-        address.setCountry(resultSet.getString("country"));
-        address.setRegion(resultSet.getString("region"));
-        address.setCity(resultSet.getString("city"));
-        address.setStreet(resultSet.getString("street"));
-        address.setHouseNumber(resultSet.getString("houseNumber"));
-        address.setPostalCode(resultSet.getString("postalCode"));
-        return address;
     }
 }

@@ -55,7 +55,7 @@ public class HolidayMenuItem {
 
     private void updateHoliday(Scanner scanner) {
         System.out.println("Holiday id");
-        Holiday holiday = holidayDao.getById(scanner.nextInt()).get();
+        Holiday holiday = holidayDao.getById(scanner.nextInt());
         System.out.println("Name");
         holiday.setName(scanner.next());
         System.out.println("Date");

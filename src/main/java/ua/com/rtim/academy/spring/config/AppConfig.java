@@ -2,12 +2,11 @@ package ua.com.rtim.academy.spring.config;
 
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
@@ -16,24 +15,24 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 @PropertySource("classpath:db.properties")
 public class AppConfig {
 
-    private final Environment environment;
-
-    @Autowired
-    public AppConfig(Environment environment) {
-        this.environment = environment;
-    }
+    @Value("${db.url}")
+    private String url;
+    @Value("${db.username}")
+    private String userName;
+    @Value("${db.password}")
+    private String password;
 
     @Bean
     public DataSource dataSource() {
-        DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-        driverManagerDataSource.setUrl(environment.getProperty("db.conn.url"));
-        driverManagerDataSource.setUsername(environment.getProperty("db.username"));
-        driverManagerDataSource.setPassword(environment.getProperty("db.password"));
-        return driverManagerDataSource;
+        DriverManagerDataSource dataSource = new DriverManagerDataSource();
+        dataSource.setUrl(url);
+        dataSource.setUsername(userName);
+        dataSource.setPassword(password);
+        return dataSource;
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource());
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
     }
 }

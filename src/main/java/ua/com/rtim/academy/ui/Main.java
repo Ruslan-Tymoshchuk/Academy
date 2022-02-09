@@ -45,19 +45,19 @@ public class Main {
                     new CourseMenuItem(courseDao, scanner);
                     break;
                 case "c":
-                    new GroupMenuItem(groupDao, scanner);
+                    new GroupMenuItem(groupDao, lessonDao, scanner);
                     break;
                 case "d":
                     new HolidayMenuItem(holidayDao, scanner);
                     break;
                 case "e":
-                    new LessonMenuItem(lessonDao, teacherDao, courseDao, audienceDao, lessonTimeDao, groupDao, scanner);
+                    new LessonMenuItem(lessonDao, teacherDao, courseDao, audienceDao, lessonTimeDao, scanner);
                     break;
                 case "f":
                     new StudentMenuItem(studentDao, addressDao, groupDao, scanner);
                     break;
                 case "g":
-                    new TeacherMenuItem(teacherDao, vacationDao, addressDao, scanner);
+                    new TeacherMenuItem(teacherDao, vacationDao, addressDao, courseDao, scanner);
                     break;
                 default:
                     break;

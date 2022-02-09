@@ -8,32 +8,20 @@
 
   <properties>
     <project.java.version>1.8</project.java.version>
-    <junit.jupiter.version>5.6.2</junit.jupiter.version>
     <maven.compiler.version>3.8.0</maven.compiler.version>
     <maven.surefire.version>2.22.2</maven.surefire.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <postgres.version>42.2.24</postgres.version>
-    <com.h2database.version>1.4.200</com.h2database.version>
     <spring.framework>5.3.14</spring.framework>
+    <junit.jupiter.version>5.6.2</junit.jupiter.version>
+    <com.h2.version>1.4.200</com.h2.version>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter</artifactId>
-      <version>${junit.jupiter.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>${postgres.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
-      <version>${com.h2database.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
@@ -54,6 +42,18 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
       <version>${spring.framework}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${com.h2.version}</version>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 

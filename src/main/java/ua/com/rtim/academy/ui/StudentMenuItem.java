@@ -22,7 +22,7 @@ public class StudentMenuItem {
 
     public StudentMenuItem(StudentDao studentDao, AddressDao addressDao, GroupDao groupDao, Scanner scanner) {
         System.out.println(
-                "Student: a: Find All, b: Create, c: Update, d: Update Address, e: Set Group For the student, f: Delete");
+                "Student: a: Find All, b: Create, c: Update, d: Update Address, e: Delete");
         this.studentDao = studentDao;
         this.addressDao = addressDao;
         this.groupDao = groupDao;
@@ -40,9 +40,6 @@ public class StudentMenuItem {
             updateStudentAddress(scanner);
             break;
         case "e":
-            addStudentToGroup(scanner);
-            break;
-        case "f":
             deleteStudent(scanner);
             break;
         default:
@@ -82,12 +79,15 @@ public class StudentMenuItem {
         AddressMenuItem addressMenuItem = new AddressMenuItem();
         Address address = addressMenuItem.addAddress(addressDao, scanner);
         student.setAddress(address);
+        System.out.println("Group id");
+        Group group = groupDao.getById(scanner.nextInt());
+        student.setGroup(group);
         studentDao.create(student);
     }
 
     public void updateStudent(Scanner scanner) {
         System.out.println("Student id");
-        Student student = studentDao.getById(scanner.nextInt()).get();
+        Student student = studentDao.getById(scanner.nextInt());
         System.out.println("First name");
         student.setFirstName(scanner.next());
         System.out.println("Last name");
@@ -96,26 +96,20 @@ public class StudentMenuItem {
         student.setPhone(scanner.next());
         System.out.println("Mail");
         student.setEmail(scanner.next());
+        System.out.println("Group id");
+        Group group = groupDao.getById(scanner.nextInt());
+        student.setGroup(group);
         studentDao.update(student);
     }
 
     public void updateStudentAddress(Scanner scanner) {
         System.out.println("Student id");
-        Student student = studentDao.getById(scanner.nextInt()).get();
+        Student student = studentDao.getById(scanner.nextInt());
         System.out.println("Address");
         Address address = student.getAddress();
         AddressMenuItem addressMenuItem = new AddressMenuItem();
         addressMenuItem.updateAddress(addressDao, address, scanner);
         student.setAddress(address);
-    }
-
-    public void addStudentToGroup(Scanner scanner) {
-        System.out.println("Student id");
-        Student student = studentDao.getById(scanner.nextInt()).get();
-        System.out.println("Group id");
-        Group group = groupDao.getById(scanner.nextInt()).get();
-        student.setGroup(group);
-        studentDao.addToGroup(group, student);
     }
 
     public void deleteStudent(Scanner scanner) {

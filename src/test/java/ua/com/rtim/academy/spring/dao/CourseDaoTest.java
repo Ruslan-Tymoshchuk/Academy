@@ -35,8 +35,9 @@ class CourseDaoTest {
         Course course = new Course();
         course.setName("English");
         course.setDescription(" ");
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Courses");
         courseDao.create(course);
-        assertEquals(5, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Courses"));
+        assertEquals(rows + 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Courses"));
     }
 
     @Test
@@ -45,21 +46,22 @@ class CourseDaoTest {
         expected.setId(3);
         expected.setName("Physics");
         expected.setDescription(" ");
-        assertEquals(expected, courseDao.getById(3).get());
+        assertEquals(expected, courseDao.getById(3));
     }
 
     @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        Course expected = courseDao.getById(3).get();
+        Course expected = courseDao.getById(3);
         expected.setName("Test");
         expected.setDescription("Test");
         courseDao.update(expected);
-        assertEquals(expected, courseDao.getById(3).get());
+        assertEquals(expected, courseDao.getById(3));
     }
 
     @Test
     void delete_shouldBeRemoveEntity_fromTheDataBase() {
+        int rows = JdbcTestUtils.countRowsInTable(jdbcTemplate, "Courses");
         courseDao.delete(4);
-        assertEquals(3, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Courses"));
+        assertEquals(rows - 1, JdbcTestUtils.countRowsInTable(jdbcTemplate, "Courses"));
     }
 }
