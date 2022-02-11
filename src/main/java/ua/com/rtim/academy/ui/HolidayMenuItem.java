@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
+import ua.com.rtim.academy.dao.HolidayDao;
 import ua.com.rtim.academy.domain.Holiday;
-import ua.com.rtim.academy.spring.dao.HolidayDao;
 
 public class HolidayMenuItem {
 

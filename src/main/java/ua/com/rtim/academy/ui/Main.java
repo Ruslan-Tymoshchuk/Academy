@@ -6,24 +6,25 @@ import java.util.Scanner;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import ua.com.rtim.academy.spring.config.AppConfig;
-import ua.com.rtim.academy.spring.dao.AddressDao;
-import ua.com.rtim.academy.spring.dao.AudienceDao;
-import ua.com.rtim.academy.spring.dao.CourseDao;
-import ua.com.rtim.academy.spring.dao.GroupDao;
-import ua.com.rtim.academy.spring.dao.HolidayDao;
-import ua.com.rtim.academy.spring.dao.LessonDao;
-import ua.com.rtim.academy.spring.dao.LessonTimeDao;
-import ua.com.rtim.academy.spring.dao.StudentDao;
-import ua.com.rtim.academy.spring.dao.TeacherDao;
-import ua.com.rtim.academy.spring.dao.VacationDao;
+import ua.com.rtim.academy.config.AppConfig;
+import ua.com.rtim.academy.dao.AddressDao;
+import ua.com.rtim.academy.dao.AudienceDao;
+import ua.com.rtim.academy.dao.CourseDao;
+import ua.com.rtim.academy.dao.GroupDao;
+import ua.com.rtim.academy.dao.HolidayDao;
+import ua.com.rtim.academy.dao.LessonDao;
+import ua.com.rtim.academy.dao.LessonTimeDao;
+import ua.com.rtim.academy.dao.StudentDao;
+import ua.com.rtim.academy.dao.TeacherDao;
+import ua.com.rtim.academy.dao.VacationDao;
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("a: Audience" + lineSeparator() + "b: Course" + lineSeparator() + "c: Group"
                 + lineSeparator() + "d: Holiday" + lineSeparator() + "e: Lesson" + lineSeparator() + "f: Student"
-                + lineSeparator() + "g: Teacher");
+                + lineSeparator() + "g: Teacher"
+        + lineSeparator() + "h: Vacation");
         try (Scanner scanner = new Scanner(System.in);
                 AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class)) {
             AudienceDao audienceDao = context.getBean(AudienceDao.class);
@@ -45,19 +46,22 @@ public class Main {
                     new CourseMenuItem(courseDao, scanner);
                     break;
                 case "c":
-                    new GroupMenuItem(groupDao, lessonDao, scanner);
+                    new GroupMenuItem(groupDao, scanner);
                     break;
                 case "d":
                     new HolidayMenuItem(holidayDao, scanner);
                     break;
                 case "e":
-                    new LessonMenuItem(lessonDao, teacherDao, courseDao, audienceDao, lessonTimeDao, scanner);
+                    new LessonMenuItem(lessonDao, teacherDao, courseDao, audienceDao, lessonTimeDao, groupDao, scanner);
                     break;
                 case "f":
                     new StudentMenuItem(studentDao, addressDao, groupDao, scanner);
                     break;
                 case "g":
-                    new TeacherMenuItem(teacherDao, vacationDao, addressDao, courseDao, scanner);
+                    new TeacherMenuItem(teacherDao, addressDao, courseDao, scanner);
+                    break;
+                case "h":
+                    new VacationMenuItem(vacationDao, teacherDao, scanner);
                     break;
                 default:
                     break;

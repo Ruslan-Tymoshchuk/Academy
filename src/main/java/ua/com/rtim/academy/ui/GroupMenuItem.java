@@ -1,23 +1,18 @@
 package ua.com.rtim.academy.ui;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import ua.com.rtim.academy.dao.GroupDao;
 import ua.com.rtim.academy.domain.Group;
-import ua.com.rtim.academy.domain.Lesson;
-import ua.com.rtim.academy.spring.dao.GroupDao;
-import ua.com.rtim.academy.spring.dao.LessonDao;
 
 public class GroupMenuItem {
 
     private final GroupDao groupDao;
-    private final LessonDao lessonDao;
 
-    public GroupMenuItem(GroupDao groupDao, LessonDao lessonDao, Scanner scanner) {
+    public GroupMenuItem(GroupDao groupDao, Scanner scanner) {
         System.out.println("Group: a: Find All, b: Create, c: Update, d: Delete");
         this.groupDao = groupDao;
-        this.lessonDao = lessonDao;
         switch (scanner.next()) {
         case "a":
             findAllGroups();
@@ -45,13 +40,6 @@ public class GroupMenuItem {
         Group group = new Group();
         System.out.println("Name");
         group.setName(scanner.next());
-        System.out.println("Select lessons id's");
-        List<Lesson> lessons = new ArrayList<>();
-        while (scanner.hasNextInt()) {
-            Lesson lesson = lessonDao.getById(scanner.nextInt());
-        lessons.add(lesson);
-        }
-        group.setLessons(lessons);
         groupDao.create(group);
     }
 
@@ -60,13 +48,6 @@ public class GroupMenuItem {
         Group group = groupDao.getById(scanner.nextInt());
         System.out.println("Name");
         group.setName(scanner.next());
-        System.out.println("Select lessons id's");
-        List<Lesson> lessons = new ArrayList<>();
-        while (scanner.hasNextInt()) {
-            Lesson lesson = lessonDao.getById(scanner.nextInt());
-            lessons.add(lesson);
-        }
-        group.setLessons(lessons);
         groupDao.update(group);
     }
 

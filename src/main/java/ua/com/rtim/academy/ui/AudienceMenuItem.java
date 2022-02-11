@@ -3,8 +3,8 @@ package ua.com.rtim.academy.ui;
 import java.util.List;
 import java.util.Scanner;
 
+import ua.com.rtim.academy.dao.AudienceDao;
 import ua.com.rtim.academy.domain.Audience;
-import ua.com.rtim.academy.spring.dao.AudienceDao;
 
 public class AudienceMenuItem {
 

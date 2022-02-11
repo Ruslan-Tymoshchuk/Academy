@@ -6,13 +6,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
+import ua.com.rtim.academy.dao.AddressDao;
+import ua.com.rtim.academy.dao.GroupDao;
+import ua.com.rtim.academy.dao.StudentDao;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Gender;
 import ua.com.rtim.academy.domain.Group;
 import ua.com.rtim.academy.domain.Student;
-import ua.com.rtim.academy.spring.dao.AddressDao;
-import ua.com.rtim.academy.spring.dao.GroupDao;
-import ua.com.rtim.academy.spring.dao.StudentDao;
 
 public class StudentMenuItem {
 

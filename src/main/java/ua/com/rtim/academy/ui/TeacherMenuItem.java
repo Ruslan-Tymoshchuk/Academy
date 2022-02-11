@@ -7,29 +7,25 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import ua.com.rtim.academy.dao.AddressDao;
+import ua.com.rtim.academy.dao.CourseDao;
+import ua.com.rtim.academy.dao.TeacherDao;
 import ua.com.rtim.academy.domain.AcademicDegree;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Course;
 import ua.com.rtim.academy.domain.Gender;
 import ua.com.rtim.academy.domain.Teacher;
-import ua.com.rtim.academy.domain.Vacation;
-import ua.com.rtim.academy.spring.dao.AddressDao;
-import ua.com.rtim.academy.spring.dao.CourseDao;
-import ua.com.rtim.academy.spring.dao.TeacherDao;
-import ua.com.rtim.academy.spring.dao.VacationDao;
 
 public class TeacherMenuItem {
 
     private final TeacherDao teacherDao;
-    private final VacationDao vacationDao;
     private final AddressDao addressDao;
     private final CourseDao courseDao;
 
-    public TeacherMenuItem(TeacherDao teacherDao, VacationDao vacationDao, AddressDao addressDao, CourseDao courseDao,
+    public TeacherMenuItem(TeacherDao teacherDao, AddressDao addressDao, CourseDao courseDao,
             Scanner scanner) {
-        System.out.println("Teacher: a: Find All, b: Create, c: Add Vacation, d: Update, e: Update Address, f: Delete");
+        System.out.println("Teacher: a: Find All, b: Create, c: Update, d: Update Address, e: Delete");
         this.teacherDao = teacherDao;
-        this.vacationDao = vacationDao;
         this.addressDao = addressDao;
         this.courseDao = courseDao;
         switch (scanner.next()) {
@@ -40,15 +36,12 @@ public class TeacherMenuItem {
             createTeacher(scanner);
             break;
         case "c":
-            addTeacherVacation(scanner);
-            break;
-        case "d":
             updateTeacher(scanner);
             break;
-        case "e":
+        case "d":
             updateTeacherAddress(scanner);
             break;
-        case "f":
+        case "e":
             deleteTeacher(scanner);
             break;
         default:
@@ -93,18 +86,6 @@ public class TeacherMenuItem {
         teacherDao.create(teacher);
     }
 
-    public void addTeacherVacation(Scanner scanner) {
-        System.out.println("Teacher id");
-        Vacation vacation = new Vacation();
-        Teacher teacher = teacherDao.getById(scanner.nextInt());
-        vacation.setTeacher(teacher);
-        System.out.println("Start date");
-        vacation.setStartDate(addDate(scanner));
-        System.out.println("End date");
-        vacation.setEndDate(addDate(scanner));
-        vacationDao.create(vacation);
-    }
-
     public void updateTeacher(Scanner scanner) {
         System.out.println("Teacher id");
         Teacher teacher = teacherDao.getById(scanner.nextInt());
@@ -119,13 +100,6 @@ public class TeacherMenuItem {
         System.out.println("Academic degree: Bachelor, Master, Doctoral");
         AcademicDegree academicDegree = AcademicDegree.valueOf(scanner.next().toUpperCase());
         teacher.setAcademicDegree(academicDegree);
-        System.out.println("Select courses id's");
-        List<Course> courses = new ArrayList<>();
-        while (scanner.hasNextInt()) {
-            Course course = courseDao.getById(scanner.nextInt());
-            courses.add(course);
-        }
-        teacher.setCourses(courses);
         teacherDao.update(teacher);
     }
 

@@ -12,7 +12,7 @@ DROP TABLE IF EXISTS vacations CASCADE;
 DROP TABLE IF EXISTS teachers_courses CASCADE;
    
 CREATE TABLE addresses (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     country VARCHAR NOT NULL,
     region VARCHAR NOT NULL,
     city VARCHAR NOT NULL,
@@ -22,30 +22,30 @@ CREATE TABLE addresses (
 );
 
 CREATE TABLE audiences (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     number INTEGER NOT NULL,
     capacity INTEGER NOT NULL
 );
 
 CREATE TABLE courses (   
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     name VARCHAR NOT NULL,
     description VARCHAR
 );
 
 CREATE TABLE groups (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     name VARCHAR NOT NULL
 );
 
 CREATE TABLE holidays (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     name VARCHAR NOT NULL,
     date DATE
 );
 
 CREATE TABLE teachers (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
     gender VARCHAR NOT NULL,
@@ -57,13 +57,13 @@ CREATE TABLE teachers (
 );
 
 CREATE TABLE lessons_times (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     start_time TIME,
     end_time TIME
 );
 
 CREATE TABLE lessons (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     teacher_id INTEGER REFERENCES teachers(id),
     course_id INTEGER REFERENCES courses(id),
     audience_id INTEGER REFERENCES audiences(id),
@@ -72,13 +72,13 @@ CREATE TABLE lessons (
 );
 
 CREATE TABLE lessons_groups (
-    lesson_id INTEGER REFERENCES lessons(id),
-    group_id INTEGER REFERENCES groups(id), 
+    lesson_id INTEGER REFERENCES lessons(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    group_id INTEGER REFERENCES groups(id) ON DELETE CASCADE ON UPDATE CASCADE, 
     UNIQUE (lesson_id, group_id)
 );
 
 CREATE TABLE students (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
     gender VARCHAR NOT NULL,
@@ -90,13 +90,13 @@ CREATE TABLE students (
 );
 
 CREATE TABLE teachers_courses(
-    teacher_id INTEGER REFERENCES teachers(id) ON UPDATE CASCADE,
-    course_id INTEGER REFERENCES courses(id) ON UPDATE CASCADE,
+    teacher_id INTEGER NOT NULL REFERENCES teachers(id) ON UPDATE CASCADE,
+    course_id INTEGER NOT NULL REFERENCES courses(id) ON UPDATE CASCADE,
     UNIQUE (teacher_id, course_id)
 );
 
 CREATE TABLE vacations (
-    id SERIAL PRIMARY KEY,
+    id INTEGER GENERATED ALWAYS AS IDENTITY,
     teacher_id INTEGER REFERENCES teachers(id) ON DELETE CASCADE ON UPDATE CASCADE,
     start_date DATE,
     end_date DATE

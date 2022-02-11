@@ -2,8 +2,8 @@ package ua.com.rtim.academy.ui;
 
 import java.util.Scanner;
 
+import ua.com.rtim.academy.dao.AddressDao;
 import ua.com.rtim.academy.domain.Address;
-import ua.com.rtim.academy.spring.dao.AddressDao;
 
 public class AddressMenuItem {
 
@@ -21,7 +21,6 @@ public class AddressMenuItem {
         address.setHouseNumber(scanner.next());
         System.out.println("Index");
         address.setPostalCode(scanner.next());
-        addressDao.create(address);
         return address;
     }
 
