@@ -100,6 +100,13 @@ public class TeacherMenuItem {
         System.out.println("Academic degree: Bachelor, Master, Doctoral");
         AcademicDegree academicDegree = AcademicDegree.valueOf(scanner.next().toUpperCase());
         teacher.setAcademicDegree(academicDegree);
+        System.out.println("Select courses id's");
+        List<Course> courses = new ArrayList<>();
+        while (scanner.hasNextInt()) {
+            Course course = courseDao.getById(scanner.nextInt());
+            courses.add(course);
+        }
+        teacher.setCourses(courses);
         teacherDao.update(teacher);
     }
 

@@ -8,8 +8,9 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import ua.com.rtim.academy.dao.mapper.GroupMapper;
 import ua.com.rtim.academy.domain.Group;
-import ua.com.rtim.academy.mapper.GroupMapper;
+import ua.com.rtim.academy.domain.Lesson;
 
 @Component
 public class GroupDao implements CrudRepository<Group> {
@@ -19,6 +20,7 @@ public class GroupDao implements CrudRepository<Group> {
     public static final String GET_GROUP_BY_ID_QUERY = "SELECT * FROM groups WHERE id = ?";
     public static final String UPDATE_GROUP_QUERY = "UPDATE groups SET name = ? WHERE id = ?";
     public static final String DELETE_GROUP_BY_ID_QUERY = "DELETE FROM groups WHERE id = ?";
+    public static final String GET_LESSON_GROUPS_QUERY = "SELECT g.* FROM lessons_groups lg LEFT JOIN groups g ON g.id = lg.group_id WHERE lesson_id = ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final GroupMapper groupMapper;
@@ -34,7 +36,7 @@ public class GroupDao implements CrudRepository<Group> {
     }
 
     @Override
-    public void create(Group group) {
+    public Group create(Group group) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(ADD_NEW_GROUP_QUERY, new String[] { "id" });
@@ -42,6 +44,7 @@ public class GroupDao implements CrudRepository<Group> {
             return statement;
         }, keyHolder);
         group.setId(keyHolder.getKeyAs(Integer.class));
+        return group;
     }
 
     @Override
@@ -57,5 +60,9 @@ public class GroupDao implements CrudRepository<Group> {
     @Override
     public void delete(int id) {
         jdbcTemplate.update(DELETE_GROUP_BY_ID_QUERY, id);
+    }
+
+    public List<Group> getLessonGroups(Lesson lesson) {
+        return jdbcTemplate.query(GET_LESSON_GROUPS_QUERY, groupMapper, lesson.getId());
     }
 }

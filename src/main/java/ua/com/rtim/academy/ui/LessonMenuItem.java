@@ -122,6 +122,16 @@ public class LessonMenuItem {
         int day = scanner.nextInt();
         LocalDate date = LocalDate.of(year, month, day);
         lesson.setDate(date);
+        System.out.println("Lesson time id");
+        LessonTime lessonTime = lessonTimeDao.getById(scanner.nextInt());
+        lesson.setTime(lessonTime);
+        System.out.println("Select groups id's");
+        List<Group> groups = new ArrayList<>();
+        while (scanner.hasNextInt()) {
+            Group group = groupDao.getById(scanner.nextInt());
+            groups.add(group);
+        }
+        lesson.setGroups(groups);
         lessonDao.update(lesson);
     }
 

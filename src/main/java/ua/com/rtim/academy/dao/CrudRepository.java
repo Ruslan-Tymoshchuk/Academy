@@ -6,7 +6,7 @@ public interface CrudRepository<T> {
 
     List<T> findAll();
 
-    void create(T entity);
+    T create(T entity);
 
     T getById(int id);
 

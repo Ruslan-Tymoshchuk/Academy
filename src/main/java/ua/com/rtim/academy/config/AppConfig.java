@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 @ComponentScan("ua.com.rtim.academy")
@@ -33,7 +32,6 @@ public class AppConfig {
     }
 
     @Bean
-    @Transactional
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }

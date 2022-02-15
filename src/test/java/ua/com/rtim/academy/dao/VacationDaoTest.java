@@ -1,4 +1,4 @@
-package ua.com.rtim.academy;
+package ua.com.rtim.academy.dao;
 
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +15,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.dao.VacationDao;
 import ua.com.rtim.academy.domain.Teacher;
 import ua.com.rtim.academy.domain.Vacation;
 

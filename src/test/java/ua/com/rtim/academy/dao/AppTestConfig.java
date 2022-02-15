@@ -1,4 +1,5 @@
-package ua.com.rtim.academy;
+
+package ua.com.rtim.academy.dao;
 
 import javax.sql.DataSource;
 
@@ -8,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 @ComponentScan("ua.com.rtim.academy")
@@ -21,7 +21,6 @@ public class AppTestConfig {
     }
 
     @Bean
-    @Transactional
     public JdbcTemplate jdbcTemplate(DataSource dataSource) {
         return new JdbcTemplate(dataSource);
     }

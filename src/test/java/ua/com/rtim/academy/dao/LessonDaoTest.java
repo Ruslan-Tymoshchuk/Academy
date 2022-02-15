@@ -1,4 +1,4 @@
-package ua.com.rtim.academy;
+package ua.com.rtim.academy.dao;
 
 import static java.time.LocalTime.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,7 +18,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.dao.LessonDao;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Audience;
 import ua.com.rtim.academy.domain.Course;
@@ -61,7 +60,7 @@ class LessonDaoTest {
         Group group1 = new Group();
         group1.setId(1);
         Group group2 = new Group();
-        group1.setId(2);
+        group2.setId(2);
         List<Group> groups = Arrays.asList(group1, group2);
         lesson.setGroups(groups);
         int expected = countRowsInTable(jdbcTemplate, "Lessons") + 1;
@@ -112,6 +111,12 @@ class LessonDaoTest {
         lessonTime.setStartTime(of(10, 40));
         lessonTime.setEndTime(of(11, 20));
         expected.setTime(lessonTime);
+        Group group1 = new Group();
+        group1.setId(1);
+        Group group2 = new Group();
+        group2.setId(2);
+        List<Group> groups = Arrays.asList(group1, group2);
+        expected.setGroups(groups);
         lessonDao.update(expected);
         assertEquals(expected, lessonDao.getById(3));
     }

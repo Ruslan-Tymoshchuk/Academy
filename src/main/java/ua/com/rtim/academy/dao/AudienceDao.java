@@ -8,8 +8,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import ua.com.rtim.academy.dao.mapper.AudienceMapper;
 import ua.com.rtim.academy.domain.Audience;
-import ua.com.rtim.academy.mapper.AudienceMapper;
 
 @Component
 public class AudienceDao implements CrudRepository<Audience> {
@@ -34,7 +34,7 @@ public class AudienceDao implements CrudRepository<Audience> {
     }
 
     @Override
-    public void create(Audience audience) {
+    public Audience create(Audience audience) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(ADD_NEW_AUDIENCE_QUERY, new String[] { "id" });
@@ -43,6 +43,7 @@ public class AudienceDao implements CrudRepository<Audience> {
             return statement;
         }, keyHolder);
         audience.setId(keyHolder.getKeyAs(Integer.class));
+        return audience;
     }
 
     @Override

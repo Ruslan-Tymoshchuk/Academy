@@ -1,4 +1,4 @@
-package ua.com.rtim.academy.mapper;
+package ua.com.rtim.academy.dao.mapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

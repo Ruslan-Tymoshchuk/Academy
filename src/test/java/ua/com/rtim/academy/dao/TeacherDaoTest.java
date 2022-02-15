@@ -1,4 +1,4 @@
-package ua.com.rtim.academy;
+package ua.com.rtim.academy.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
@@ -16,7 +16,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.dao.TeacherDao;
 import ua.com.rtim.academy.domain.AcademicDegree;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Course;
@@ -111,6 +110,12 @@ class TeacherDaoTest {
         address.setPostalCode("020590");
         expected.setAddress(address);
         expected.setAcademicDegree(AcademicDegree.valueOf("MASTER"));
+        Course course1 = new Course();
+        course1.setId(1);
+        Course course2 = new Course();
+        course2.setId(2);
+        List<Course> courses = Arrays.asList(course1, course2);
+        expected.setCourses(courses);
         teacherDao.update(expected);
         assertEquals(expected, teacherDao.getById(1));
     }

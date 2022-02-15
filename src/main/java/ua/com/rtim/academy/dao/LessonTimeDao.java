@@ -8,8 +8,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import ua.com.rtim.academy.dao.mapper.LessonTimeMapper;
 import ua.com.rtim.academy.domain.LessonTime;
-import ua.com.rtim.academy.mapper.LessonTimeMapper;
 
 @Component
 public class LessonTimeDao implements CrudRepository<LessonTime> {
@@ -34,7 +34,7 @@ public class LessonTimeDao implements CrudRepository<LessonTime> {
     }
 
     @Override
-    public void create(LessonTime lessonTime) {
+    public LessonTime create(LessonTime lessonTime) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(ADD_NEW_LESSONTIME_QUERY, new String[] { "id" });
@@ -43,6 +43,7 @@ public class LessonTimeDao implements CrudRepository<LessonTime> {
             return statement;
         }, keyHolder);
         lessonTime.setId(keyHolder.getKeyAs(Integer.class));
+        return lessonTime;
     }
 
     @Override

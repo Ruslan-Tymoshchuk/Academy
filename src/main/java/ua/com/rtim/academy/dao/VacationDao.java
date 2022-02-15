@@ -9,8 +9,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import ua.com.rtim.academy.dao.mapper.VacationMapper;
 import ua.com.rtim.academy.domain.Vacation;
-import ua.com.rtim.academy.mapper.VacationMapper;
 
 @Component
 public class VacationDao implements CrudRepository<Vacation> {
@@ -36,7 +36,7 @@ public class VacationDao implements CrudRepository<Vacation> {
     }
 
     @Override
-    public void create(Vacation vacation) {
+    public Vacation create(Vacation vacation) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(ADD_NEW_VACATION_QUERY, new String[] { "id" });
@@ -46,6 +46,7 @@ public class VacationDao implements CrudRepository<Vacation> {
             return statement;
         }, keyHolder);
         vacation.setId(keyHolder.getKeyAs(Integer.class));
+        return vacation;
     }
 
     @Override

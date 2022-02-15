@@ -1,4 +1,4 @@
-package ua.com.rtim.academy;
+package ua.com.rtim.academy.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
@@ -14,7 +14,6 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.dao.StudentDao;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Gender;
 import ua.com.rtim.academy.domain.Group;

@@ -8,9 +8,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import ua.com.rtim.academy.dao.mapper.LessonMapper;
 import ua.com.rtim.academy.domain.Lesson;
-import ua.com.rtim.academy.mapper.LessonMapper;
 
 @Component
 public class LessonDao implements CrudRepository<Lesson> {
@@ -21,6 +22,8 @@ public class LessonDao implements CrudRepository<Lesson> {
     public static final String GET_LESSON_BY_ID_QUERY = "SELECT * FROM lessons WHERE id = ?";
     public static final String UPDATE_LESSON_QUERY = "UPDATE lessons SET teacher_id = ?, course_id = ?, "
             + "audience_id = ?, date = ? WHERE id = ?";
+    public static final String UPDATE_LESSON_GROUPS_QUERY = "INSERT INTO lessons_groups (lesson_id, group_id) SELECT ?, ? "
+            + "WHERE NOT EXISTS (SELECT lesson_id, group_id FROM lessons_groups WHERE lesson_id = ? AND group_id = ?)";
     public static final String DELETE_LESSON_BY_ID_QUERY = "DELETE FROM lessons WHERE id = ?";
     public static final String GET_GROUP_LESSONS_QUERY = "SELECT l.* FROM lessons l "
             + "LEFT JOIN lessons_times lt ON lt.id = l.id LEFT JOIN lessons_groups lg ON lg.lesson_id = l.id "
@@ -40,7 +43,8 @@ public class LessonDao implements CrudRepository<Lesson> {
     }
 
     @Override
-    public void create(Lesson lesson) {
+    @Transactional
+    public Lesson create(Lesson lesson) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(ADD_NEW_LESSON_QUERY, new String[] { "id" });
@@ -54,6 +58,7 @@ public class LessonDao implements CrudRepository<Lesson> {
         lesson.setId(keyHolder.getKeyAs(Integer.class));
         lesson.getGroups()
                 .forEach(group -> jdbcTemplate.update(ADD_LESSON_GROUPS_QUERY, lesson.getId(), group.getId()));
+        return lesson;
     }
 
     @Override
@@ -62,9 +67,14 @@ public class LessonDao implements CrudRepository<Lesson> {
     }
 
     @Override
+    @Transactional
     public void update(Lesson lesson) {
         jdbcTemplate.update(UPDATE_LESSON_QUERY, lesson.getTeacher().getId(), lesson.getCourse().getId(),
                 lesson.getAudience().getId(), lesson.getDate(), lesson.getId());
+        lesson.getGroups()
+                .forEach(group -> jdbcTemplate.update(UPDATE_LESSON_GROUPS_QUERY, lesson.getId(), group.getId(),
+                        lesson.getId(),
+                        group.getId()));
     }
 
     @Override

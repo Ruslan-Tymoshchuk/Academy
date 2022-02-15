@@ -1,4 +1,4 @@
-package ua.com.rtim.academy;
+package ua.com.rtim.academy.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
@@ -12,61 +12,52 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.dao.CourseDao;
-import ua.com.rtim.academy.domain.Course;
+import ua.com.rtim.academy.domain.Group;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppTestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-class CourseDaoTest {
+class GroupDaoTest {
 
     @Autowired
-    private CourseDao courseDao;
+    private GroupDao groupDao;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Test
     void findAll_shouldBeGetAllEntities_fromTheDataBase() {
-        assertEquals(4, courseDao.findAll().size());
+        assertEquals(4, groupDao.findAll().size());
     }
 
     @Test
     void create_shouldBeAddNewEntity_intoTheDataBase() {
-        Course course = new Course();
-        course.setName("English");
-        course.setDescription(" ");
-        int expected = countRowsInTable(jdbcTemplate, "Courses") + 1;
-        courseDao.create(course);
-        assertEquals(expected, countRowsInTable(jdbcTemplate, "Courses"));
+        Group group = new Group();
+        group.setName("HM-12");
+        int expected = countRowsInTable(jdbcTemplate, "Groups") + 1;
+        groupDao.create(group);
+        assertEquals(expected, countRowsInTable(jdbcTemplate, "Groups"));
     }
 
     @Test
     void getById_shouldBeGetEntity_fromTheDataBase() {
-        Course expected = new Course();
+        Group expected = new Group();
         expected.setId(3);
-        expected.setName("Physics");
-        expected.setDescription(" ");
-        assertEquals(expected, courseDao.getById(3));
+        expected.setName("MM-15");
+        assertEquals(expected, groupDao.getById(3));
     }
 
     @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        Course expected = courseDao.getById(3);
+        Group expected = groupDao.getById(3);
         expected.setName("Test");
-        expected.setDescription("Test");
-        courseDao.update(expected);
-        assertEquals(expected, courseDao.getById(3));
+        groupDao.update(expected);
+        assertEquals(expected, groupDao.getById(3));
     }
 
     @Test
     void delete_shouldBeRemoveEntity_fromTheDataBase() {
-        int expected = countRowsInTable(jdbcTemplate, "Courses") - 1;
-        courseDao.delete(4);
-        assertEquals(expected, countRowsInTable(jdbcTemplate, "Courses"));
-    }
-
-    @Test
-    void shouldBeGet_AllCoursesByTeacher_fromTheDataBase() {
-        assertEquals(3, courseDao.getCoursesByTeacherId(1).size());
+        int expected = countRowsInTable(jdbcTemplate, "Groups") - 1;
+        groupDao.delete(4);
+        assertEquals(expected, countRowsInTable(jdbcTemplate, "Groups"));
     }
 }

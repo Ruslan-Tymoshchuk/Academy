@@ -8,8 +8,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import ua.com.rtim.academy.dao.mapper.AddressMapper;
 import ua.com.rtim.academy.domain.Address;
-import ua.com.rtim.academy.mapper.AddressMapper;
 
 @Component
 public class AddressDao implements CrudRepository<Address> {
@@ -36,7 +36,7 @@ public class AddressDao implements CrudRepository<Address> {
     }
 
     @Override
-    public void create(Address address) {
+    public Address create(Address address) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(ADD_NEW_ADDRESS_QUERY,
@@ -50,6 +50,7 @@ public class AddressDao implements CrudRepository<Address> {
             return statement;
         }, keyHolder);
         address.setId(keyHolder.getKeyAs(Integer.class));
+        return address;
     }
 
     @Override

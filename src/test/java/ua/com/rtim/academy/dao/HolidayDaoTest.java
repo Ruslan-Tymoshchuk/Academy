@@ -1,5 +1,6 @@
-package ua.com.rtim.academy;
+package ua.com.rtim.academy.dao;
 
+import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
@@ -12,56 +13,55 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.dao.AudienceDao;
-import ua.com.rtim.academy.domain.Audience;
+import ua.com.rtim.academy.domain.Holiday;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = AppTestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
-class AudienceDaoTest {
+class HolidayDaoTest {
 
     @Autowired
-    private AudienceDao audienceDao;
+    private HolidayDao holidayDao;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Test
     void findAll_shouldBeGetAllEntities_fromTheDataBase() {
-        assertEquals(4, audienceDao.findAll().size());
+        assertEquals(3, holidayDao.findAll().size());
     }
 
     @Test
     void create_shouldBeAddNewEntity_intoTheDataBase() {
-        Audience audience = new Audience();
-        audience.setNumber(234);
-        audience.setCapacity(25);
-        int expected = countRowsInTable(jdbcTemplate, "Audiences") + 1;
-        audienceDao.create(audience);
-        assertEquals(expected, countRowsInTable(jdbcTemplate, "Audiences"));
+        Holiday holiday = new Holiday();
+        holiday.setName("New Year");
+        holiday.setDate(of(2021, 12, 31));
+        int expected = countRowsInTable(jdbcTemplate, "Holidays") + 1;
+        holidayDao.create(holiday);
+        assertEquals(expected, countRowsInTable(jdbcTemplate, "Holidays"));
     }
 
     @Test
     void getById_shouldBeGetEntity_fromTheDataBase() {
-        Audience expected = new Audience();
+        Holiday expected = new Holiday();
         expected.setId(3);
-        expected.setNumber(125);
-        expected.setCapacity(20);
-        assertEquals(expected, audienceDao.getById(3));
+        expected.setName("Holiday3");
+        expected.setDate(of(2022, 3, 3));
+        assertEquals(expected, holidayDao.getById(3));
     }
 
     @Test
     void update_shouldBeUpdateEntity_inTheDataBase() {
-        Audience expected = audienceDao.getById(3);
-        expected.setNumber(25);
-        expected.setCapacity(30);
-        audienceDao.update(expected);
-        assertEquals(expected, audienceDao.getById(3));
+        Holiday expected = holidayDao.getById(3);
+        expected.setName("Test");
+        expected.setDate(of(2022, 4, 4));
+        holidayDao.update(expected);
+        assertEquals(expected, holidayDao.getById(3));
     }
 
     @Test
     void delete_shouldBeRemoveEntity_fromTheDataBase() {
-        int expected = countRowsInTable(jdbcTemplate, "Audiences") - 1;
-        audienceDao.delete(4);
-        assertEquals(expected, countRowsInTable(jdbcTemplate, "Audiences"));
+        int expected = countRowsInTable(jdbcTemplate, "Holidays") - 1;
+        holidayDao.delete(3);
+        assertEquals(expected, countRowsInTable(jdbcTemplate, "Holidays"));
     }
 }
