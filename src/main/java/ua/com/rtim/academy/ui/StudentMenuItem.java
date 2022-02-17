@@ -21,8 +21,7 @@ public class StudentMenuItem {
     private final GroupDao groupDao;
 
     public StudentMenuItem(StudentDao studentDao, AddressDao addressDao, GroupDao groupDao, Scanner scanner) {
-        System.out.println(
-                "Student: a: Find All, b: Create, c: Update, d: Update Address, e: Delete");
+        System.out.println("Student: a: Find All, b: Create, c: Update, d: Update Address, e: Delete");
         this.studentDao = studentDao;
         this.addressDao = addressDao;
         this.groupDao = groupDao;

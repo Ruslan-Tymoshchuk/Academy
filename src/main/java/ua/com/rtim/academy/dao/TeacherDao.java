@@ -73,8 +73,7 @@ public class TeacherDao implements CrudRepository<Teacher> {
     @Override
     @Transactional
     public void update(Teacher teacher) {
-        jdbcTemplate.update(UPDATE_TEACHER_QUERY, teacher.getFirstName(), teacher.getLastName(),
-                teacher.getPhone(),
+        jdbcTemplate.update(UPDATE_TEACHER_QUERY, teacher.getFirstName(), teacher.getLastName(), teacher.getPhone(),
                 teacher.getEmail(), String.valueOf(teacher.getAcademicDegree()), teacher.getId());
         addressDao.update(teacher.getAddress());
         jdbcTemplate.update(DELETE_COURSES_BY_TEACHER_QUERY, teacher.getId());

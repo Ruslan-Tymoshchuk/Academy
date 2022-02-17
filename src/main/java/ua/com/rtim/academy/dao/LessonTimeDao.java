@@ -48,8 +48,7 @@ public class LessonTimeDao implements CrudRepository<LessonTime> {
 
     @Override
     public LessonTime getById(int id) {
-        return jdbcTemplate.queryForObject(GET_LESSONTIME_BY_ID_QUERY, lessonTimeMapper,
-                id);
+        return jdbcTemplate.queryForObject(GET_LESSONTIME_BY_ID_QUERY, lessonTimeMapper, id);
     }
 
     @Override

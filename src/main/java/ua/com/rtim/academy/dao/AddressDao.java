@@ -39,8 +39,7 @@ public class AddressDao implements CrudRepository<Address> {
     public Address create(Address address) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
-            PreparedStatement statement = connection.prepareStatement(ADD_NEW_ADDRESS_QUERY,
-                    new String[] { "id" });
+            PreparedStatement statement = connection.prepareStatement(ADD_NEW_ADDRESS_QUERY, new String[] { "id" });
             statement.setString(1, address.getCountry());
             statement.setString(2, address.getRegion());
             statement.setString(3, address.getCity());

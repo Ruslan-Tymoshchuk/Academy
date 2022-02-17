@@ -1,4 +1,3 @@
-
 package ua.com.rtim.academy.config;
 
 import javax.sql.DataSource;

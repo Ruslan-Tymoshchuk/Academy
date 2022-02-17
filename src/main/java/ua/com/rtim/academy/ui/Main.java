@@ -23,8 +23,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("a: Audience" + lineSeparator() + "b: Course" + lineSeparator() + "c: Group"
                 + lineSeparator() + "d: Holiday" + lineSeparator() + "e: Lesson" + lineSeparator() + "f: Student"
-                + lineSeparator() + "g: Teacher"
-        + lineSeparator() + "h: Vacation");
+                + lineSeparator() + "g: Teacher" + lineSeparator() + "h: Vacation");
         try (Scanner scanner = new Scanner(System.in);
                 AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(AppConfig.class)) {
             AudienceDao audienceDao = context.getBean(AudienceDao.class);

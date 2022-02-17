@@ -22,8 +22,7 @@ public class TeacherMenuItem {
     private final AddressDao addressDao;
     private final CourseDao courseDao;
 
-    public TeacherMenuItem(TeacherDao teacherDao, AddressDao addressDao, CourseDao courseDao,
-            Scanner scanner) {
+    public TeacherMenuItem(TeacherDao teacherDao, AddressDao addressDao, CourseDao courseDao, Scanner scanner) {
         System.out.println("Teacher: a: Find All, b: Create, c: Update, d: Update Address, e: Delete");
         this.teacherDao = teacherDao;
         this.addressDao = addressDao;
