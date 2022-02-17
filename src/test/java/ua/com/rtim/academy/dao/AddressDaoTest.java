@@ -12,10 +12,11 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.Address;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class AddressDaoTest {
 
@@ -25,12 +26,12 @@ class AddressDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_addresses() {
         assertEquals(4, addressDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_address() {
         Address address = new Address();
         address.setCountry("Ukraine");
         address.setRegion("Kyivska");
@@ -39,12 +40,14 @@ class AddressDaoTest {
         address.setHouseNumber("114");
         address.setPostalCode("020590");
         int expected = countRowsInTable(jdbcTemplate, "Addresses") + 1;
+
         addressDao.create(address);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Addresses"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_address_by_id() {
         Address expected = new Address();
         expected.setId(3);
         expected.setCountry("Ukraine");
@@ -53,11 +56,14 @@ class AddressDaoTest {
         expected.setStreet("Velika Vasilkivska");
         expected.setHouseNumber("116");
         expected.setPostalCode("020590");
-        assertEquals(expected, addressDao.getById(3));
+
+        Address actual = addressDao.getById(3);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
+    void updates_the_address() {
         Address expected = new Address();
         expected.setId(3);
         expected.setCountry("Ukraine");
@@ -66,14 +72,18 @@ class AddressDaoTest {
         expected.setStreet("Velika Vasilkivska");
         expected.setHouseNumber("116");
         expected.setPostalCode("020590");
+
         addressDao.update(expected);
+
         assertEquals(expected, addressDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_address() {
         int expected = countRowsInTable(jdbcTemplate, "Addresses") - 1;
+
         addressDao.delete(4);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Addresses"));
     }
 }

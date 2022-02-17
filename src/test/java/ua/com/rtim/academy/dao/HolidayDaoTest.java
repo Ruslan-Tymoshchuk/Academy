@@ -13,10 +13,11 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.Holiday;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class HolidayDaoTest {
 
@@ -26,42 +27,52 @@ class HolidayDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_holidays() {
         assertEquals(3, holidayDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_holiday() {
         Holiday holiday = new Holiday();
         holiday.setName("New Year");
         holiday.setDate(of(2021, 12, 31));
         int expected = countRowsInTable(jdbcTemplate, "Holidays") + 1;
+
         holidayDao.create(holiday);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Holidays"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_holiday_by_id() {
         Holiday expected = new Holiday();
         expected.setId(3);
         expected.setName("Holiday3");
         expected.setDate(of(2022, 3, 3));
-        assertEquals(expected, holidayDao.getById(3));
+
+        Holiday actual = holidayDao.getById(3);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
-        Holiday expected = holidayDao.getById(3);
+    void updates_the_holiday() {
+        Holiday expected = new Holiday();
+        expected.setId(3);
         expected.setName("Test");
         expected.setDate(of(2022, 4, 4));
+
         holidayDao.update(expected);
+
         assertEquals(expected, holidayDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_holiday() {
         int expected = countRowsInTable(jdbcTemplate, "Holidays") - 1;
+
         holidayDao.delete(3);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Holidays"));
     }
 }

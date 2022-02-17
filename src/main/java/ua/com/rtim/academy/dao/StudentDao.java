@@ -43,6 +43,7 @@ public class StudentDao implements CrudRepository<Student> {
     @Transactional
     public Student create(Student student) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
+        Address address = addressDao.create(student.getAddress());
         jdbcTemplate.update(connection -> {
             PreparedStatement statement = connection.prepareStatement(ADD_NEW_STUDENT_QUERY, new String[] { "id" });
             statement.setString(1, student.getFirstName());
@@ -51,8 +52,6 @@ public class StudentDao implements CrudRepository<Student> {
             statement.setObject(4, student.getBirthDate());
             statement.setString(5, student.getPhone());
             statement.setString(6, student.getEmail());
-            Address address = addressDao.create(student.getAddress());
-            student.setAddress(address);
             statement.setInt(7, address.getId());
             statement.setInt(8, student.getGroup().getId());
             return statement;

@@ -16,6 +16,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.AcademicDegree;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Course;
@@ -23,7 +24,7 @@ import ua.com.rtim.academy.domain.Gender;
 import ua.com.rtim.academy.domain.Teacher;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class TeacherDaoTest {
 
@@ -33,12 +34,12 @@ class TeacherDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_teachers() {
         assertEquals(3, teacherDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_teacher() {
         Teacher teacher = new Teacher();
         teacher.setFirstName("FName");
         teacher.setLastName("LName");
@@ -63,12 +64,14 @@ class TeacherDaoTest {
         List<Course> courses = Arrays.asList(course1, course2);
         teacher.setCourses(courses);
         int expected = countRowsInTable(jdbcTemplate, "Teachers") + 1;
+
         teacherDao.create(teacher);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Teachers"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_teacher_by_id() {
         Teacher expected = new Teacher();
         expected.setId(1);
         expected.setFirstName("FName1");
@@ -87,11 +90,14 @@ class TeacherDaoTest {
         address.setPostalCode("020590");
         expected.setAddress(address);
         expected.setAcademicDegree(AcademicDegree.valueOf("BACHELOR"));
-        assertEquals(expected, teacherDao.getById(1));
+
+        Teacher actual = teacherDao.getById(1);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
+    void updates_the_teacher() {
         Teacher expected = new Teacher();
         expected.setId(1);
         expected.setFirstName("TestName");
@@ -116,14 +122,18 @@ class TeacherDaoTest {
         course2.setId(2);
         List<Course> courses = Arrays.asList(course1, course2);
         expected.setCourses(courses);
+
         teacherDao.update(expected);
+
         assertEquals(expected, teacherDao.getById(1));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_teacher() {
         int expected = countRowsInTable(jdbcTemplate, "Teachers") - 1;
+
         teacherDao.delete(3);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Teachers"));
     }
 }

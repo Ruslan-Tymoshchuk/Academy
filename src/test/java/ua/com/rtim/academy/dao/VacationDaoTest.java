@@ -15,11 +15,12 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.Teacher;
 import ua.com.rtim.academy.domain.Vacation;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class VacationDaoTest {
 
@@ -29,12 +30,12 @@ class VacationDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_vacations() {
         assertEquals(4, vacationDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_vacation() {
         Vacation vacation = new Vacation();
         vacation.setStartDate(of(2022, 5, 2));
         vacation.setEndDate(of(2022, 5, 22));
@@ -42,42 +43,54 @@ class VacationDaoTest {
         teacher.setId(3);
         vacation.setTeacher(teacher);
         int expected = countRowsInTable(jdbcTemplate, "Vacations") + 1;
+
         vacationDao.create(vacation);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Vacations"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_vacation_by_id() {
         Vacation expected = new Vacation();
         expected.setId(3);
         expected.setStartDate(of(2022, 3, 3));
         expected.setEndDate(of(2022, 3, 22));
-        assertEquals(expected, vacationDao.getById(3));
+
+        Vacation actual = vacationDao.getById(3);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
+    void updates_the_vacation() {
         Vacation expected = vacationDao.getById(3);
         expected.setStartDate(of(2022, 4, 4));
         expected.setEndDate(of(2022, 4, 24));
         Teacher teacher = new Teacher();
         teacher.setId(3);
         expected.setTeacher(teacher);
+
         vacationDao.update(expected);
+
         assertEquals(expected, vacationDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_vacation() {
         int expected = countRowsInTable(jdbcTemplate, "Vacations") - 1;
+
         vacationDao.delete(3);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Vacations"));
     }
 
     @Test
-    void shouldBeGet_AllVacationsByDate_fromTheDataBase() {
+    void finds_all_vacations_by_date() {
         LocalDate startDate = of(2022, 3, 3);
         LocalDate endDate = of(2022, 3, 22);
-        assertEquals(3, vacationDao.getVacationsByDateInterval(startDate, endDate).size());
+
+        int actual = vacationDao.findByDateInterval(startDate, endDate).size();
+
+        assertEquals(3, actual);
     }
 }

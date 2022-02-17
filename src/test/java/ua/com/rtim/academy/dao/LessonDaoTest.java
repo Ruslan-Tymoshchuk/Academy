@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -18,6 +17,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Audience;
 import ua.com.rtim.academy.domain.Course;
@@ -27,7 +27,7 @@ import ua.com.rtim.academy.domain.LessonTime;
 import ua.com.rtim.academy.domain.Teacher;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class LessonDaoTest {
 
@@ -37,12 +37,12 @@ class LessonDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_lessons() {
         assertEquals(3, lessonDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_lesson() {
         Lesson lesson = new Lesson();
         Teacher teacher = new Teacher();
         teacher.setId(1);
@@ -64,12 +64,14 @@ class LessonDaoTest {
         List<Group> groups = Arrays.asList(group1, group2);
         lesson.setGroups(groups);
         int expected = countRowsInTable(jdbcTemplate, "Lessons") + 1;
+
         lessonDao.create(lesson);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Lessons"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_lesson_by_id() {
         Lesson expected = new Lesson();
         expected.setId(1);
         Teacher teacher = new Teacher();
@@ -87,11 +89,14 @@ class LessonDaoTest {
         lessonTime.setStartTime(of(8, 40));
         lessonTime.setEndTime(of(9, 20));
         expected.setTime(lessonTime);
-        assertEquals(expected, lessonDao.getById(1));
+
+        Lesson actual = lessonDao.getById(1);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
+    void updates_the_lesson() {
         Lesson expected = new Lesson();
         expected.setId(3);
         Teacher teacher = new Teacher();
@@ -117,21 +122,28 @@ class LessonDaoTest {
         group2.setId(2);
         List<Group> groups = Arrays.asList(group1, group2);
         expected.setGroups(groups);
+
         lessonDao.update(expected);
+
         assertEquals(expected, lessonDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_lesson() {
         int rows = countRowsInTable(jdbcTemplate, "Lessons");
+
         lessonDao.delete(3);
+
         assertEquals(rows - 1, countRowsInTable(jdbcTemplate, "Lessons"));
     }
 
     @Test
-    void shouldBeGet_AllGroupLessonsByTime_fromTheDataBase() {
-        LocalTime startTime = of(8, 40);
-        LocalTime endTime = of(10, 20);
-        assertEquals(2, lessonDao.getGroupLessons(1, startTime, endTime).size());
+    void finds_all_lessons_by_group_id_and_date_interval() {
+        LocalDate startDate = LocalDate.of(2022, 10, 10);
+        LocalDate endDate = LocalDate.of(2022, 11, 11);
+
+        int actual = lessonDao.findByGroupIdAndDateInterval(1, startDate, endDate).size();
+
+        assertEquals(3, actual);
     }
 }

@@ -14,13 +14,14 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.Address;
 import ua.com.rtim.academy.domain.Gender;
 import ua.com.rtim.academy.domain.Group;
 import ua.com.rtim.academy.domain.Student;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class StudentDaoTest {
 
@@ -30,12 +31,12 @@ class StudentDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_students() {
         assertEquals(3, studentDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_student() {
         Student student = new Student();
         student.setFirstName("FName");
         student.setLastName("LName");
@@ -56,12 +57,14 @@ class StudentDaoTest {
         group.setId(3);
         student.setGroup(group);
         int expected = countRowsInTable(jdbcTemplate, "Students") + 1;
+
         studentDao.create(student);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Students"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_student_by_id() {
         Student expected = new Student();
         expected.setId(1);
         expected.setFirstName("FName1");
@@ -83,11 +86,14 @@ class StudentDaoTest {
         group.setId(1);
         group.setName("MM-13");
         expected.setGroup(group);
-        assertEquals(expected, studentDao.getById(1));
+
+        Student actual = studentDao.getById(1);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
+    void updates_the_student() {
         Student expected = new Student();
         expected.setId(3);
         expected.setFirstName("FName");
@@ -109,14 +115,18 @@ class StudentDaoTest {
         group.setId(3);
         group.setName("MM-15");
         expected.setGroup(group);
+
         studentDao.update(expected);
+
         assertEquals(expected, studentDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_student() {
         int expected = countRowsInTable(jdbcTemplate, "Students") - 1;
+
         studentDao.delete(3);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Students"));
     }
 }

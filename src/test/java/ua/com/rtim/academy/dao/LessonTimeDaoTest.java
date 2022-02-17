@@ -13,10 +13,11 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.LessonTime;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class LessonTimeDaoTest {
 
@@ -26,42 +27,51 @@ class LessonTimeDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_lessonTimes() {
         assertEquals(4, lessonTimeDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_lessonTime() {
         LessonTime lessonTime = new LessonTime();
         lessonTime.setStartTime(of(8, 20));
         lessonTime.setEndTime(of(9, 40));
         int expected = countRowsInTable(jdbcTemplate, "lessons_times") + 1;
+
         lessonTimeDao.create(lessonTime);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "lessons_times"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_lessonTime_by_id() {
         LessonTime expected = new LessonTime();
         expected.setId(3);
         expected.setStartTime(of(10, 40));
         expected.setEndTime(of(11, 20));
-        assertEquals(expected, lessonTimeDao.getById(3));
+
+        LessonTime actual = lessonTimeDao.getById(3);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
+    void updates_the_lessonTime() {
         LessonTime expected = lessonTimeDao.getById(3);
         expected.setStartTime(of(11, 40));
         expected.setEndTime(of(12, 20));
+
         lessonTimeDao.update(expected);
+
         assertEquals(expected, lessonTimeDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_lessonTime() {
         int expected = countRowsInTable(jdbcTemplate, "lessons_times") - 1;
+
         lessonTimeDao.delete(4);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "lessons_times"));
     }
 }

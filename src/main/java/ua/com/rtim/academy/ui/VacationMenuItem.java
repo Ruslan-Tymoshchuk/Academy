@@ -77,7 +77,7 @@ public class VacationMenuItem {
         LocalDate startDate = addDate(scanner);
         System.out.println("End date");
         LocalDate endDate = addDate(scanner);
-        List<Vacation> vacations = vacationDao.getVacationsByDateInterval(startDate, endDate);
+        List<Vacation> vacations = vacationDao.findByDateInterval(startDate, endDate);
         vacations.forEach(
                 vacation -> System.out.println(String.format("%s %s", vacation.getStartDate(), vacation.getEndDate())));
     }

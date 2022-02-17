@@ -62,7 +62,7 @@ public class GroupDao implements CrudRepository<Group> {
         jdbcTemplate.update(DELETE_GROUP_BY_ID_QUERY, id);
     }
 
-    public List<Group> getLessonGroups(Lesson lesson) {
+    public List<Group> findByLesson(Lesson lesson) {
         return jdbcTemplate.query(GET_LESSON_GROUPS_QUERY, groupMapper, lesson.getId());
     }
 }

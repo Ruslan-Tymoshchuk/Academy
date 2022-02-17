@@ -12,10 +12,11 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.Audience;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class AudienceDaoTest {
 
@@ -25,42 +26,52 @@ class AudienceDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_audiences() {
         assertEquals(4, audienceDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_audience() {
         Audience audience = new Audience();
         audience.setNumber(234);
         audience.setCapacity(25);
         int expected = countRowsInTable(jdbcTemplate, "Audiences") + 1;
+
         audienceDao.create(audience);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Audiences"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_audience_by_id() {
         Audience expected = new Audience();
         expected.setId(3);
         expected.setNumber(125);
         expected.setCapacity(20);
-        assertEquals(expected, audienceDao.getById(3));
+
+        Audience actual = audienceDao.getById(3);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
-        Audience expected = audienceDao.getById(3);
+    void updates_the_audience() {
+        Audience expected = new Audience();
+        expected.setId(3);
         expected.setNumber(25);
         expected.setCapacity(30);
+
         audienceDao.update(expected);
+
         assertEquals(expected, audienceDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_audience() {
         int expected = countRowsInTable(jdbcTemplate, "Audiences") - 1;
+
         audienceDao.delete(4);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Audiences"));
     }
 }

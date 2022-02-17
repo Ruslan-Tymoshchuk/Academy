@@ -35,7 +35,7 @@ public class TeacherMapper implements RowMapper<Teacher> {
         teacher.setEmail(resultSet.getString("email"));
         teacher.setAddress(addressMapper.mapRow(resultSet, rowNum));
         teacher.setAcademicDegree(AcademicDegree.valueOf(resultSet.getString("academic_degree")));
-        teacher.setCourses(courseDao.getCoursesByTeacherId(teacher.getId()));
+        teacher.setCourses(courseDao.findByTeacher(teacher.getId()));
         return teacher;
     }
 }

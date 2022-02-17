@@ -65,7 +65,7 @@ public class VacationDao implements CrudRepository<Vacation> {
         jdbcTemplate.update(DELETE_VACATION_BY_ID_QUERY, id);
     }
 
-    public List<Vacation> getVacationsByDateInterval(LocalDate startDate, LocalDate endDate) {
+    public List<Vacation> findByDateInterval(LocalDate startDate, LocalDate endDate) {
         return jdbcTemplate.query(GET_VACATIONS_BY_DATE_INTERVAL_QUERY, vacationMapper, startDate, endDate);
     }
 }

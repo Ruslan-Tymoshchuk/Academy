@@ -3,7 +3,6 @@ package ua.com.rtim.academy.ui;
 import static java.time.LocalTime.of;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -157,15 +156,25 @@ public class LessonMenuItem {
         System.out.println("Group id");
         int groupId = scanner.nextInt();
         System.out.println("Start time");
-        LocalTime startTime = of(scanner.nextInt(), scanner.nextInt());
+        LocalDate startDate = addDate(scanner);
         System.out.println("End time");
-        LocalTime endTime = of(scanner.nextInt(), scanner.nextInt());
-        List<Lesson> lessons = lessonDao.getGroupLessons(groupId, startTime, endTime);
+        LocalDate endDate = addDate(scanner);
+        List<Lesson> lessons = lessonDao.findByGroupIdAndDateInterval(groupId, startDate, endDate);
         lessons.forEach(lesson -> System.out.println(lesson.getDate()));
     }
 
     private void deleteLesson(Scanner scanner) {
         System.out.println("Lesson Id");
         lessonDao.delete(scanner.nextInt());
+    }
+
+    private LocalDate addDate(Scanner scanner) {
+        System.out.println("Year");
+        int year = scanner.nextInt();
+        System.out.println("Month");
+        int month = scanner.nextInt();
+        System.out.println("Day");
+        int day = scanner.nextInt();
+        return LocalDate.of(year, month, day);
     }
 }

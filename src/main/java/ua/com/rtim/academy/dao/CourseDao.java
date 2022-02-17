@@ -62,7 +62,7 @@ public class CourseDao implements CrudRepository<Course> {
         jdbcTemplate.update(DELETE_COURSE_BY_ID_QUERY, id);
     }
 
-    public List<Course> getCoursesByTeacherId(int teacherId) {
+    public List<Course> findByTeacher(int teacherId) {
         return jdbcTemplate.query(GET_COURSES_BY_TEACHER_ID_QUERY, courseMapper, teacherId);
     }
 }

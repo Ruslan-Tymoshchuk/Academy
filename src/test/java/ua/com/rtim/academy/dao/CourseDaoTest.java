@@ -12,10 +12,11 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.Course;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class CourseDaoTest {
 
@@ -25,47 +26,57 @@ class CourseDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_courses() {
         assertEquals(4, courseDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_course() {
         Course course = new Course();
         course.setName("English");
         course.setDescription(" ");
         int expected = countRowsInTable(jdbcTemplate, "Courses") + 1;
+
         courseDao.create(course);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Courses"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_course_by_id() {
         Course expected = new Course();
         expected.setId(3);
         expected.setName("Physics");
         expected.setDescription(" ");
-        assertEquals(expected, courseDao.getById(3));
+
+        Course actual = courseDao.getById(3);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
-        Course expected = courseDao.getById(3);
+    void updates_the_course() {
+        Course expected = new Course();
+        expected.setId(3);
         expected.setName("Test");
         expected.setDescription("Test");
+
         courseDao.update(expected);
+
         assertEquals(expected, courseDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_course() {
         int expected = countRowsInTable(jdbcTemplate, "Courses") - 1;
+
         courseDao.delete(4);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Courses"));
     }
 
     @Test
-    void shouldBeGet_AllCoursesByTeacher_fromTheDataBase() {
-        assertEquals(3, courseDao.getCoursesByTeacherId(1).size());
+    void finds_all_courses_by_teacher() {
+        assertEquals(3, courseDao.findByTeacher(1).size());
     }
 }

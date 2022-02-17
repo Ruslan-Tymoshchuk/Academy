@@ -12,10 +12,11 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import ua.com.rtim.academy.config.TestConfig;
 import ua.com.rtim.academy.domain.Group;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = AppTestConfig.class)
+@ContextConfiguration(classes = TestConfig.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class GroupDaoTest {
 
@@ -25,39 +26,49 @@ class GroupDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void findAll_shouldBeGetAllEntities_fromTheDataBase() {
+    void finds_all_groups() {
         assertEquals(4, groupDao.findAll().size());
     }
 
     @Test
-    void create_shouldBeAddNewEntity_intoTheDataBase() {
+    void adds_new_group() {
         Group group = new Group();
         group.setName("HM-12");
         int expected = countRowsInTable(jdbcTemplate, "Groups") + 1;
+
         groupDao.create(group);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Groups"));
     }
 
     @Test
-    void getById_shouldBeGetEntity_fromTheDataBase() {
+    void gets_group_by_id() {
         Group expected = new Group();
         expected.setId(3);
         expected.setName("MM-15");
-        assertEquals(expected, groupDao.getById(3));
+
+        Group actual = groupDao.getById(3);
+
+        assertEquals(expected, actual);
     }
 
     @Test
-    void update_shouldBeUpdateEntity_inTheDataBase() {
-        Group expected = groupDao.getById(3);
+    void updates_the_group() {
+        Group expected = new Group();
+        expected.setId(3);
         expected.setName("Test");
+
         groupDao.update(expected);
+
         assertEquals(expected, groupDao.getById(3));
     }
 
     @Test
-    void delete_shouldBeRemoveEntity_fromTheDataBase() {
+    void deletes_the_group() {
         int expected = countRowsInTable(jdbcTemplate, "Groups") - 1;
+
         groupDao.delete(4);
+
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Groups"));
     }
 }

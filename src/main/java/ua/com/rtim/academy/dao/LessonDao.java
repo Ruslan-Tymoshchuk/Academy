@@ -1,7 +1,7 @@
 package ua.com.rtim.academy.dao;
 
 import java.sql.PreparedStatement;
-import java.time.LocalTime;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,16 +18,14 @@ public class LessonDao implements CrudRepository<Lesson> {
 
     public static final String GET_ALL_LESSONS_QUERY = "SELECT * FROM lessons";
     public static final String ADD_NEW_LESSON_QUERY = "INSERT INTO lessons(teacher_id, course_id, audience_id, date, lesson_time_id) VALUES (?, ?, ?, ?, ?)";
-    public static final String ADD_LESSON_GROUPS_QUERY = "INSERT INTO lessons_groups(lesson_id, group_id) VALUES (?, ?)";
+    public static final String ADD_GROUP_BY_LESSON_QUERY = "INSERT INTO lessons_groups (lesson_id, group_id) VALUES (?, ?)";
     public static final String GET_LESSON_BY_ID_QUERY = "SELECT * FROM lessons WHERE id = ?";
     public static final String UPDATE_LESSON_QUERY = "UPDATE lessons SET teacher_id = ?, course_id = ?, "
             + "audience_id = ?, date = ? WHERE id = ?";
-    public static final String UPDATE_LESSON_GROUPS_QUERY = "INSERT INTO lessons_groups (lesson_id, group_id) SELECT ?, ? "
-            + "WHERE NOT EXISTS (SELECT lesson_id, group_id FROM lessons_groups WHERE lesson_id = ? AND group_id = ?)";
+    public static final String DELETE_GROUPS_BY_LESSON_QUERY = "DELETE FROM lessons_groups WHERE lesson_id = ?";
     public static final String DELETE_LESSON_BY_ID_QUERY = "DELETE FROM lessons WHERE id = ?";
-    public static final String GET_GROUP_LESSONS_QUERY = "SELECT l.* FROM lessons l "
-            + "LEFT JOIN lessons_times lt ON lt.id = l.id LEFT JOIN lessons_groups lg ON lg.lesson_id = l.id "
-            + "WHERE group_id = ? AND start_time >= ? AND end_time <= ?";
+    public static final String GET_GROUP_LESSONS_QUERY = "SELECT l.* FROM lessons l LEFT JOIN lessons_groups lg ON lg.lesson_id = l.id "
+            + "WHERE group_id = ? AND date between ? and ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final LessonMapper lessonMapper;
@@ -57,7 +55,7 @@ public class LessonDao implements CrudRepository<Lesson> {
         }, keyHolder);
         lesson.setId(keyHolder.getKeyAs(Integer.class));
         lesson.getGroups()
-                .forEach(group -> jdbcTemplate.update(ADD_LESSON_GROUPS_QUERY, lesson.getId(), group.getId()));
+                .forEach(group -> jdbcTemplate.update(ADD_GROUP_BY_LESSON_QUERY, lesson.getId(), group.getId()));
         return lesson;
     }
 
@@ -71,10 +69,9 @@ public class LessonDao implements CrudRepository<Lesson> {
     public void update(Lesson lesson) {
         jdbcTemplate.update(UPDATE_LESSON_QUERY, lesson.getTeacher().getId(), lesson.getCourse().getId(),
                 lesson.getAudience().getId(), lesson.getDate(), lesson.getId());
+        jdbcTemplate.update(DELETE_GROUPS_BY_LESSON_QUERY, lesson.getId());
         lesson.getGroups()
-                .forEach(group -> jdbcTemplate.update(UPDATE_LESSON_GROUPS_QUERY, lesson.getId(), group.getId(),
-                        lesson.getId(),
-                        group.getId()));
+                .forEach(group -> jdbcTemplate.update(ADD_GROUP_BY_LESSON_QUERY, lesson.getId(), group.getId()));
     }
 
     @Override
@@ -82,7 +79,7 @@ public class LessonDao implements CrudRepository<Lesson> {
         jdbcTemplate.update(DELETE_LESSON_BY_ID_QUERY, id);
     }
 
-    public List<Lesson> getGroupLessons(int groupId, LocalTime startTime, LocalTime endTime) {
-        return jdbcTemplate.query(GET_GROUP_LESSONS_QUERY, lessonMapper, groupId, startTime, endTime);
+    public List<Lesson> findByGroupIdAndDateInterval(int groupId, LocalDate startDate, LocalDate endDate) {
+        return jdbcTemplate.query(GET_GROUP_LESSONS_QUERY, lessonMapper, groupId, startDate, endDate);
     }
 }
