@@ -1,11 +1,13 @@
 package ua.com.rtim.academy.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -26,12 +28,12 @@ class AddressDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void finds_all_addresses() {
+    void findAll_shouldGetAllAddresses() {
         assertEquals(4, addressDao.findAll().size());
     }
 
     @Test
-    void adds_new_address() {
+    void create_shouldAddNewAddress() {
         Address address = new Address();
         address.setCountry("Ukraine");
         address.setRegion("Kyivska");
@@ -47,7 +49,7 @@ class AddressDaoTest {
     }
 
     @Test
-    void gets_address_by_id() {
+    void getById_shouldGetAddressById() {
         Address expected = new Address();
         expected.setId(3);
         expected.setCountry("Ukraine");
@@ -63,7 +65,7 @@ class AddressDaoTest {
     }
 
     @Test
-    void updates_the_address() {
+    void update_shouldUpdateAddress() {
         Address expected = new Address();
         expected.setId(3);
         expected.setCountry("Ukraine");
@@ -79,11 +81,31 @@ class AddressDaoTest {
     }
 
     @Test
-    void deletes_the_address() {
+    void delete_shouldDeleteAddress() {
         int expected = countRowsInTable(jdbcTemplate, "Addresses") - 1;
 
         addressDao.delete(4);
 
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Addresses"));
+    }
+
+    @Test
+    void givenNull_whenCreateAddress_thenExeption() {
+        assertThrows(NullPointerException.class, () -> addressDao.create(null));
+    }
+
+    @Test
+    void givenNonExistId_whenGetById_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> addressDao.getById(0));
+    }
+
+    @Test
+    void givenNull_whenUpdateAddress_thenExeption() {
+        assertThrows(NullPointerException.class, () -> addressDao.update(null));
+    }
+
+    @Test
+    void givenNonExistId_whenDelete_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> addressDao.getById(0));
     }
 }

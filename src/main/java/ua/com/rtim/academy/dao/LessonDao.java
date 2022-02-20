@@ -22,7 +22,12 @@ public class LessonDao implements CrudRepository<Lesson> {
     public static final String GET_LESSON_BY_ID_QUERY = "SELECT * FROM lessons WHERE id = ?";
     public static final String UPDATE_LESSON_QUERY = "UPDATE lessons SET teacher_id = ?, course_id = ?, "
             + "audience_id = ?, date = ? WHERE id = ?";
-    public static final String DELETE_GROUPS_BY_LESSON_QUERY = "DELETE FROM lessons_groups WHERE lesson_id = ?";
+    public static final String ADD_LESSONS_GROUPS_TEMP_TABLE_QUERY = "CREATE TEMP TABLE lessons_groups_temp (lesson_id INTEGER NOT NULL, group_id INTEGER NOT NULL)";
+    public static final String UPDATE_GROUPS_BY_LESSON_QUERY = "INSERT INTO lessons_groups_temp (lesson_id, group_id) VALUES (?, ?);"
+            + "INSERT INTO lessons_groups (lesson_id, group_id) SELECT * FROM lessons_groups_temp lgtemp "
+            + "WHERE NOT EXISTS (SELECT * FROM lessons_groups lg "
+            + "WHERE lg.group_id = lgtemp.group_id AND lg.lesson_id = lgtemp.lesson_id); "
+            + "DELETE FROM lessons_groups WHERE group_id NOT IN (SELECT group_id FROM lessons_groups_temp)";
     public static final String DELETE_LESSON_BY_ID_QUERY = "DELETE FROM lessons WHERE id = ?";
     public static final String GET_GROUP_LESSONS_QUERY = "SELECT l.* FROM lessons l LEFT JOIN lessons_groups lg ON lg.lesson_id = l.id "
             + "WHERE group_id = ? AND date between ? and ?";
@@ -69,9 +74,9 @@ public class LessonDao implements CrudRepository<Lesson> {
     public void update(Lesson lesson) {
         jdbcTemplate.update(UPDATE_LESSON_QUERY, lesson.getTeacher().getId(), lesson.getCourse().getId(),
                 lesson.getAudience().getId(), lesson.getDate(), lesson.getId());
-        jdbcTemplate.update(DELETE_GROUPS_BY_LESSON_QUERY, lesson.getId());
+        jdbcTemplate.execute(ADD_LESSONS_GROUPS_TEMP_TABLE_QUERY);
         lesson.getGroups()
-                .forEach(group -> jdbcTemplate.update(ADD_GROUP_BY_LESSON_QUERY, lesson.getId(), group.getId()));
+                .forEach(group -> jdbcTemplate.update(UPDATE_GROUPS_BY_LESSON_QUERY, lesson.getId(), group.getId()));
     }
 
     @Override

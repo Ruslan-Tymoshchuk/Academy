@@ -2,6 +2,7 @@ package ua.com.rtim.academy.dao;
 
 import static java.time.LocalTime.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -37,12 +39,12 @@ class LessonDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void finds_all_lessons() {
+    void findAll_shouldGetAllLessons() {
         assertEquals(3, lessonDao.findAll().size());
     }
 
     @Test
-    void adds_new_lesson() {
+    void create_shouldAddNewLesson() {
         Lesson lesson = new Lesson();
         Teacher teacher = new Teacher();
         teacher.setId(1);
@@ -71,7 +73,7 @@ class LessonDaoTest {
     }
 
     @Test
-    void gets_lesson_by_id() {
+    void getById_shouldGetLessonById() {
         Lesson expected = new Lesson();
         expected.setId(1);
         Teacher teacher = new Teacher();
@@ -96,7 +98,7 @@ class LessonDaoTest {
     }
 
     @Test
-    void updates_the_lesson() {
+    void update_shouldUpdateLesson() {
         Lesson expected = new Lesson();
         expected.setId(3);
         Teacher teacher = new Teacher();
@@ -129,7 +131,7 @@ class LessonDaoTest {
     }
 
     @Test
-    void deletes_the_lesson() {
+    void delete_shouldDeleteLesson() {
         int rows = countRowsInTable(jdbcTemplate, "Lessons");
 
         lessonDao.delete(3);
@@ -138,12 +140,32 @@ class LessonDaoTest {
     }
 
     @Test
-    void finds_all_lessons_by_group_id_and_date_interval() {
+    void shouldGet_allLessonsByGroupAndDateInterval() {
         LocalDate startDate = LocalDate.of(2022, 10, 10);
         LocalDate endDate = LocalDate.of(2022, 11, 11);
 
         int actual = lessonDao.findByGroupIdAndDateInterval(1, startDate, endDate).size();
 
         assertEquals(3, actual);
+    }
+
+    @Test
+    void givenNull_whenCreateLesson_thenExeption() {
+        assertThrows(NullPointerException.class, () -> lessonDao.create(null));
+    }
+
+    @Test
+    void givenNonExistId_whenGetById_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> lessonDao.getById(0));
+    }
+
+    @Test
+    void givenNull_whenUpdateLesson_thenExeption() {
+        assertThrows(NullPointerException.class, () -> lessonDao.update(null));
+    }
+
+    @Test
+    void givenNonExistId_whenDelete_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> lessonDao.getById(0));
     }
 }

@@ -2,11 +2,13 @@ package ua.com.rtim.academy.dao;
 
 import static java.time.LocalTime.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -27,12 +29,12 @@ class LessonTimeDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void finds_all_lessonTimes() {
+    void findAll_shouldGetAllLessonTimes() {
         assertEquals(4, lessonTimeDao.findAll().size());
     }
 
     @Test
-    void adds_new_lessonTime() {
+    void create_shouldAddNewLessonTime() {
         LessonTime lessonTime = new LessonTime();
         lessonTime.setStartTime(of(8, 20));
         lessonTime.setEndTime(of(9, 40));
@@ -44,7 +46,7 @@ class LessonTimeDaoTest {
     }
 
     @Test
-    void gets_lessonTime_by_id() {
+    void getById_shouldGetLessonTimeById() {
         LessonTime expected = new LessonTime();
         expected.setId(3);
         expected.setStartTime(of(10, 40));
@@ -56,7 +58,7 @@ class LessonTimeDaoTest {
     }
 
     @Test
-    void updates_the_lessonTime() {
+    void update_shouldUpdateLessonTime() {
         LessonTime expected = lessonTimeDao.getById(3);
         expected.setStartTime(of(11, 40));
         expected.setEndTime(of(12, 20));
@@ -67,11 +69,31 @@ class LessonTimeDaoTest {
     }
 
     @Test
-    void deletes_the_lessonTime() {
+    void delete_shouldDeleteLessonTime() {
         int expected = countRowsInTable(jdbcTemplate, "lessons_times") - 1;
 
         lessonTimeDao.delete(4);
 
         assertEquals(expected, countRowsInTable(jdbcTemplate, "lessons_times"));
+    }
+
+    @Test
+    void givenNull_whenCreateLessonTime_thenExeption() {
+        assertThrows(NullPointerException.class, () -> lessonTimeDao.create(null));
+    }
+
+    @Test
+    void givenNonExistId_whenGetById_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> lessonTimeDao.getById(0));
+    }
+
+    @Test
+    void givenNull_whenUpdateLessonTime_thenExeption() {
+        assertThrows(NullPointerException.class, () -> lessonTimeDao.update(null));
+    }
+
+    @Test
+    void givenNonExistId_whenDelete_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> lessonTimeDao.getById(0));
     }
 }

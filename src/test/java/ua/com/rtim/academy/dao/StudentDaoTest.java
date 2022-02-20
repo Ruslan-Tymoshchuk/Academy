@@ -1,6 +1,7 @@
 package ua.com.rtim.academy.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import java.time.LocalDate;
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -31,12 +33,12 @@ class StudentDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void finds_all_students() {
+    void findAll_shouldGetAllStudents() {
         assertEquals(3, studentDao.findAll().size());
     }
 
     @Test
-    void adds_new_student() {
+    void create_shouldAddNewStudent() {
         Student student = new Student();
         student.setFirstName("FName");
         student.setLastName("LName");
@@ -64,7 +66,7 @@ class StudentDaoTest {
     }
 
     @Test
-    void gets_student_by_id() {
+    void getById_shouldGetStudentById() {
         Student expected = new Student();
         expected.setId(1);
         expected.setFirstName("FName1");
@@ -93,7 +95,7 @@ class StudentDaoTest {
     }
 
     @Test
-    void updates_the_student() {
+    void update_shouldUpdateStudent() {
         Student expected = new Student();
         expected.setId(3);
         expected.setFirstName("FName");
@@ -122,11 +124,31 @@ class StudentDaoTest {
     }
 
     @Test
-    void deletes_the_student() {
+    void delete_shouldDeleteStudent() {
         int expected = countRowsInTable(jdbcTemplate, "Students") - 1;
 
         studentDao.delete(3);
 
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Students"));
+    }
+
+    @Test
+    void givenNull_whenCreateStudent_thenExeption() {
+        assertThrows(NullPointerException.class, () -> studentDao.create(null));
+    }
+
+    @Test
+    void givenNonExistId_whenGetById_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> studentDao.getById(0));
+    }
+
+    @Test
+    void givenNull_whenUpdateStudent_thenExeption() {
+        assertThrows(NullPointerException.class, () -> studentDao.update(null));
+    }
+
+    @Test
+    void givenNonExistId_whenDelete_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> studentDao.getById(0));
     }
 }

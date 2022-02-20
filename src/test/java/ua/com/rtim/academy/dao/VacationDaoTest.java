@@ -2,6 +2,7 @@ package ua.com.rtim.academy.dao;
 
 import static java.time.LocalDate.of;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -30,12 +32,12 @@ class VacationDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void finds_all_vacations() {
+    void findAll_shouldGetAllVacations() {
         assertEquals(4, vacationDao.findAll().size());
     }
 
     @Test
-    void adds_new_vacation() {
+    void create_shouldAddNewVacation() {
         Vacation vacation = new Vacation();
         vacation.setStartDate(of(2022, 5, 2));
         vacation.setEndDate(of(2022, 5, 22));
@@ -50,7 +52,7 @@ class VacationDaoTest {
     }
 
     @Test
-    void gets_vacation_by_id() {
+    void getById_shouldGetVacationById() {
         Vacation expected = new Vacation();
         expected.setId(3);
         expected.setStartDate(of(2022, 3, 3));
@@ -62,7 +64,7 @@ class VacationDaoTest {
     }
 
     @Test
-    void updates_the_vacation() {
+    void update_shouldUpdateVacation() {
         Vacation expected = vacationDao.getById(3);
         expected.setStartDate(of(2022, 4, 4));
         expected.setEndDate(of(2022, 4, 24));
@@ -76,7 +78,7 @@ class VacationDaoTest {
     }
 
     @Test
-    void deletes_the_vacation() {
+    void delete_shouldDeleteVacation() {
         int expected = countRowsInTable(jdbcTemplate, "Vacations") - 1;
 
         vacationDao.delete(3);
@@ -85,12 +87,32 @@ class VacationDaoTest {
     }
 
     @Test
-    void finds_all_vacations_by_date() {
+    void shouldGet_allVacationsByDate() {
         LocalDate startDate = of(2022, 3, 3);
         LocalDate endDate = of(2022, 3, 22);
 
         int actual = vacationDao.findByDateInterval(startDate, endDate).size();
 
         assertEquals(3, actual);
+    }
+
+    @Test
+    void givenNull_whenCreateVacation_thenExeption() {
+        assertThrows(NullPointerException.class, () -> vacationDao.create(null));
+    }
+
+    @Test
+    void givenNonExistId_whenGetById_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> vacationDao.getById(0));
+    }
+
+    @Test
+    void givenNull_whenUpdateVacation_thenExeption() {
+        assertThrows(NullPointerException.class, () -> vacationDao.update(null));
+    }
+
+    @Test
+    void givenNonExistId_whenDelete_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> vacationDao.getById(0));
     }
 }

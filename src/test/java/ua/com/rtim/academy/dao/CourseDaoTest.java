@@ -1,11 +1,13 @@
 package ua.com.rtim.academy.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -26,12 +28,12 @@ class CourseDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void finds_all_courses() {
+    void findAll_shouldGetAllCourses() {
         assertEquals(4, courseDao.findAll().size());
     }
 
     @Test
-    void adds_new_course() {
+    void create_shouldAddNewCourse() {
         Course course = new Course();
         course.setName("English");
         course.setDescription(" ");
@@ -43,7 +45,7 @@ class CourseDaoTest {
     }
 
     @Test
-    void gets_course_by_id() {
+    void getById_shouldGetCourseById() {
         Course expected = new Course();
         expected.setId(3);
         expected.setName("Physics");
@@ -55,7 +57,7 @@ class CourseDaoTest {
     }
 
     @Test
-    void updates_the_course() {
+    void update_shouldUpdateCourse() {
         Course expected = new Course();
         expected.setId(3);
         expected.setName("Test");
@@ -67,7 +69,7 @@ class CourseDaoTest {
     }
 
     @Test
-    void deletes_the_course() {
+    void delete_shouldDeleteCourse() {
         int expected = countRowsInTable(jdbcTemplate, "Courses") - 1;
 
         courseDao.delete(4);
@@ -76,7 +78,27 @@ class CourseDaoTest {
     }
 
     @Test
-    void finds_all_courses_by_teacher() {
+    void shouldGet_allCoursesByTeacher() {
         assertEquals(3, courseDao.findByTeacher(1).size());
+    }
+
+    @Test
+    void givenNull_whenCreateCourse_thenExeption() {
+        assertThrows(NullPointerException.class, () -> courseDao.create(null));
+    }
+
+    @Test
+    void givenNonExistId_whenGetById_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> courseDao.getById(0));
+    }
+
+    @Test
+    void givenNull_whenUpdateCourse_thenExeption() {
+        assertThrows(NullPointerException.class, () -> courseDao.update(null));
+    }
+
+    @Test
+    void givenNonExistId_whenDelete_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> courseDao.getById(0));
     }
 }

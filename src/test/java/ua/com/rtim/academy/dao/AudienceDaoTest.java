@@ -1,11 +1,13 @@
 package ua.com.rtim.academy.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -26,12 +28,12 @@ class AudienceDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void finds_all_audiences() {
+    void findAll_shouldGetAllAudiences() {
         assertEquals(4, audienceDao.findAll().size());
     }
 
     @Test
-    void adds_new_audience() {
+    void create_shouldAddNewAudience() {
         Audience audience = new Audience();
         audience.setNumber(234);
         audience.setCapacity(25);
@@ -43,7 +45,7 @@ class AudienceDaoTest {
     }
 
     @Test
-    void gets_audience_by_id() {
+    void getById_shouldGetAudienceById() {
         Audience expected = new Audience();
         expected.setId(3);
         expected.setNumber(125);
@@ -55,7 +57,7 @@ class AudienceDaoTest {
     }
 
     @Test
-    void updates_the_audience() {
+    void update_shouldUpdateAudience() {
         Audience expected = new Audience();
         expected.setId(3);
         expected.setNumber(25);
@@ -67,11 +69,31 @@ class AudienceDaoTest {
     }
 
     @Test
-    void deletes_the_audience() {
+    void delete_shouldDeleteAudience() {
         int expected = countRowsInTable(jdbcTemplate, "Audiences") - 1;
 
         audienceDao.delete(4);
 
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Audiences"));
+    }
+
+    @Test
+    void givenNull_whenCreateAudience_thenExeption() {
+        assertThrows(NullPointerException.class, () -> audienceDao.create(null));
+    }
+
+    @Test
+    void givenNonExistId_whenGetById_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> audienceDao.getById(0));
+    }
+
+    @Test
+    void givenNull_whenUpdateAudience_thenExeption() {
+        assertThrows(NullPointerException.class, () -> audienceDao.update(null));
+    }
+
+    @Test
+    void givenNonExistId_whenDelete_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> audienceDao.getById(0));
     }
 }

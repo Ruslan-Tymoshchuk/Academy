@@ -1,11 +1,13 @@
 package ua.com.rtim.academy.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.jdbc.JdbcTestUtils.countRowsInTable;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
@@ -26,12 +28,12 @@ class GroupDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
-    void finds_all_groups() {
+    void findAll_shouldGetAllGroups() {
         assertEquals(4, groupDao.findAll().size());
     }
 
     @Test
-    void adds_new_group() {
+    void create_shouldAddNewGroup() {
         Group group = new Group();
         group.setName("HM-12");
         int expected = countRowsInTable(jdbcTemplate, "Groups") + 1;
@@ -42,7 +44,7 @@ class GroupDaoTest {
     }
 
     @Test
-    void gets_group_by_id() {
+    void getById_shouldGetGroupById() {
         Group expected = new Group();
         expected.setId(3);
         expected.setName("MM-15");
@@ -53,7 +55,7 @@ class GroupDaoTest {
     }
 
     @Test
-    void updates_the_group() {
+    void update_shouldUpdateGroup() {
         Group expected = new Group();
         expected.setId(3);
         expected.setName("Test");
@@ -64,11 +66,31 @@ class GroupDaoTest {
     }
 
     @Test
-    void deletes_the_group() {
+    void delete_shouldDeleteGroup() {
         int expected = countRowsInTable(jdbcTemplate, "Groups") - 1;
 
         groupDao.delete(4);
 
         assertEquals(expected, countRowsInTable(jdbcTemplate, "Groups"));
+    }
+
+    @Test
+    void givenNull_whenCreateGroup_thenExeption() {
+        assertThrows(NullPointerException.class, () -> groupDao.create(null));
+    }
+
+    @Test
+    void givenNonExistId_whenGetById_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> groupDao.getById(0));
+    }
+
+    @Test
+    void givenNull_whenUpdateGroup_thenExeption() {
+        assertThrows(NullPointerException.class, () -> groupDao.update(null));
+    }
+
+    @Test
+    void givenNonExistId_whenDelete_thenExeption() {
+        assertThrows(EmptyResultDataAccessException.class, () -> groupDao.getById(0));
     }
 }
