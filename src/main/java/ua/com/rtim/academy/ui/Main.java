@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import ua.com.rtim.academy.config.AppConfig;
+import ua.com.rtim.academy.AppConfig;
 import ua.com.rtim.academy.dao.AddressDao;
 import ua.com.rtim.academy.dao.AudienceDao;
 import ua.com.rtim.academy.dao.CourseDao;

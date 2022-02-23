@@ -102,7 +102,7 @@ public class LessonMenuItem {
     }
 
     private void updateLesson(Scanner scanner) {
-        System.out.println("Leeson id");
+        System.out.println("Lesson id");
         Lesson lesson = lessonDao.getById(scanner.nextInt());
         System.out.println("Teacher id");
         Teacher teacher = teacherDao.getById(scanner.nextInt());

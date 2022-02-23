@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.config.TestConfig;
+import ua.com.rtim.academy.TestConfig;
 import ua.com.rtim.academy.domain.Course;
 
 @ExtendWith(SpringExtension.class)
@@ -95,10 +95,5 @@ class CourseDaoTest {
     @Test
     void givenNull_whenUpdateCourse_thenExeption() {
         assertThrows(NullPointerException.class, () -> courseDao.update(null));
-    }
-
-    @Test
-    void givenNonExistId_whenDelete_thenExeption() {
-        assertThrows(EmptyResultDataAccessException.class, () -> courseDao.getById(0));
     }
 }

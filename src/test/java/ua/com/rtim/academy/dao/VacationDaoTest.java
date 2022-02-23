@@ -17,7 +17,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.config.TestConfig;
+import ua.com.rtim.academy.TestConfig;
 import ua.com.rtim.academy.domain.Teacher;
 import ua.com.rtim.academy.domain.Vacation;
 
@@ -109,10 +109,5 @@ class VacationDaoTest {
     @Test
     void givenNull_whenUpdateVacation_thenExeption() {
         assertThrows(NullPointerException.class, () -> vacationDao.update(null));
-    }
-
-    @Test
-    void givenNonExistId_whenDelete_thenExeption() {
-        assertThrows(EmptyResultDataAccessException.class, () -> vacationDao.getById(0));
     }
 }

@@ -73,7 +73,8 @@ CREATE TABLE lessons (
 
 CREATE TABLE lessons_groups (
     lesson_id INTEGER NOT NULL REFERENCES lessons(id) ON DELETE CASCADE ON UPDATE CASCADE,
-    group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE ON UPDATE CASCADE 
+    group_id INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    UNIQUE(lesson_id, group_id)
 );
 
 CREATE TABLE students (
@@ -90,7 +91,8 @@ CREATE TABLE students (
 
 CREATE TABLE teachers_courses(
     teacher_id INTEGER NOT NULL REFERENCES teachers(id) ON UPDATE CASCADE,
-    course_id INTEGER NOT NULL REFERENCES courses(id) ON UPDATE CASCADE
+    course_id INTEGER NOT NULL REFERENCES courses(id) ON UPDATE CASCADE,
+    UNIQUE(teacher_id, course_id)
 );
 
 CREATE TABLE vacations (

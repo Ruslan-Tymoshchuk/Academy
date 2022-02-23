@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.config.TestConfig;
+import ua.com.rtim.academy.TestConfig;
 import ua.com.rtim.academy.domain.Address;
 
 @ExtendWith(SpringExtension.class)
@@ -102,10 +102,5 @@ class AddressDaoTest {
     @Test
     void givenNull_whenUpdateAddress_thenExeption() {
         assertThrows(NullPointerException.class, () -> addressDao.update(null));
-    }
-
-    @Test
-    void givenNonExistId_whenDelete_thenExeption() {
-        assertThrows(EmptyResultDataAccessException.class, () -> addressDao.getById(0));
     }
 }

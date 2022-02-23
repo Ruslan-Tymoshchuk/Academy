@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import ua.com.rtim.academy.config.TestConfig;
+import ua.com.rtim.academy.TestConfig;
 import ua.com.rtim.academy.domain.Group;
 
 @ExtendWith(SpringExtension.class)
@@ -87,10 +87,5 @@ class GroupDaoTest {
     @Test
     void givenNull_whenUpdateGroup_thenExeption() {
         assertThrows(NullPointerException.class, () -> groupDao.update(null));
-    }
-
-    @Test
-    void givenNonExistId_whenDelete_thenExeption() {
-        assertThrows(EmptyResultDataAccessException.class, () -> groupDao.getById(0));
     }
 }

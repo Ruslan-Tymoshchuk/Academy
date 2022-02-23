@@ -23,12 +23,7 @@ public class TeacherDao implements CrudRepository<Teacher> {
     public static final String ADD_COURSE_BY_TEACHER_QUERY = "INSERT INTO teachers_courses (teacher_id, course_id) VALUES (?, ?)";
     public static final String GET_TEACHER_BY_ID_QUERY = "SELECT t.id, first_name, last_name, gender, birth_date, phone, email, "
             + "ad.*, academic_degree FROM teachers t LEFT JOIN addresses ad ON ad.id = t.address_id WHERE t.id = ?";
-    public static final String ADD_TEACHERS_COURSES_TEMP_TABLE_QUERY = "CREATE TEMP TABLE teachers_courses_temp (teacher_id INTEGER NOT NULL, course_id INTEGER NOT NULL)";
-    public static final String UPDATE_COURSES_BY_TEACHER_QUERY = "INSERT INTO teachers_courses_temp (teacher_id, course_id) VALUES (?, ?); "
-            + "INSERT INTO teachers_courses (teacher_id, course_id) SELECT * FROM teachers_courses_temp tctemp "
-            + "WHERE NOT EXISTS (SELECT * FROM teachers_courses tc "
-            + "WHERE tc.teacher_id = tctemp.teacher_id AND tc.course_id = tctemp.course_id); "
-            + "DELETE FROM teachers_courses WHERE course_id NOT IN (SELECT course_id FROM teachers_courses_temp)";
+    public static final String DELETE_IRRELEVANT_COURSES_BY_TEACHER_QUERY = "DELETE FROM teachers_courses WHERE teacher_id = ? AND course_id != ?";
     public static final String UPDATE_TEACHER_QUERY = "UPDATE teachers SET first_name = ?, last_name = ?, phone = ?, email = ?, academic_degree = ? WHERE id = ?";
     public static final String DELETE_TEACHER_BY_ID_QUERY = "DELETE FROM teachers WHERE id = ?";
 
@@ -81,9 +76,10 @@ public class TeacherDao implements CrudRepository<Teacher> {
         jdbcTemplate.update(UPDATE_TEACHER_QUERY, teacher.getFirstName(), teacher.getLastName(), teacher.getPhone(),
                 teacher.getEmail(), String.valueOf(teacher.getAcademicDegree()), teacher.getId());
         addressDao.update(teacher.getAddress());
-        jdbcTemplate.execute(ADD_TEACHERS_COURSES_TEMP_TABLE_QUERY);
-        teacher.getCourses().forEach(
-                course -> jdbcTemplate.update(UPDATE_COURSES_BY_TEACHER_QUERY, teacher.getId(), course.getId()));
+        teacher.getCourses().forEach(course -> jdbcTemplate.update(DELETE_IRRELEVANT_COURSES_BY_TEACHER_QUERY,
+                teacher.getId(), course.getId()));
+        teacher.getCourses()
+                .forEach(course -> jdbcTemplate.update(ADD_COURSE_BY_TEACHER_QUERY, teacher.getId(), course.getId()));
     }
 
     @Override
