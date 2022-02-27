@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ua.com.rtim.academy.dao.mapper.TeacherMapper;
 import ua.com.rtim.academy.domain.Address;
+import ua.com.rtim.academy.domain.Course;
 import ua.com.rtim.academy.domain.Teacher;
 
 @Component
@@ -23,18 +24,21 @@ public class TeacherDao implements CrudRepository<Teacher> {
     public static final String ADD_COURSE_BY_TEACHER_QUERY = "INSERT INTO teachers_courses (teacher_id, course_id) VALUES (?, ?)";
     public static final String GET_TEACHER_BY_ID_QUERY = "SELECT t.id, first_name, last_name, gender, birth_date, phone, email, "
             + "ad.*, academic_degree FROM teachers t LEFT JOIN addresses ad ON ad.id = t.address_id WHERE t.id = ?";
-    public static final String DELETE_IRRELEVANT_COURSES_BY_TEACHER_QUERY = "DELETE FROM teachers_courses WHERE teacher_id = ? AND course_id != ?";
     public static final String UPDATE_TEACHER_QUERY = "UPDATE teachers SET first_name = ?, last_name = ?, phone = ?, email = ?, academic_degree = ? WHERE id = ?";
+    public static final String DELETE_COURSE_BY_TEACHER_QUERY = "DELETE FROM teachers_courses WHERE teacher_id = ? AND course_id = ?";
     public static final String DELETE_TEACHER_BY_ID_QUERY = "DELETE FROM teachers WHERE id = ?";
 
     private final JdbcTemplate jdbcTemplate;
     private final TeacherMapper teacherMapper;
     private final AddressDao addressDao;
+    private final CourseDao courseDao;
 
-    public TeacherDao(JdbcTemplate jdbcTemplate, TeacherMapper teacherMapper, AddressDao addressDao) {
+    public TeacherDao(JdbcTemplate jdbcTemplate, TeacherMapper teacherMapper, AddressDao addressDao,
+            CourseDao courseDao) {
         this.jdbcTemplate = jdbcTemplate;
         this.teacherMapper = teacherMapper;
         this.addressDao = addressDao;
+        this.courseDao = courseDao;
     }
 
     @Override
@@ -76,11 +80,19 @@ public class TeacherDao implements CrudRepository<Teacher> {
         jdbcTemplate.update(UPDATE_TEACHER_QUERY, teacher.getFirstName(), teacher.getLastName(), teacher.getPhone(),
                 teacher.getEmail(), String.valueOf(teacher.getAcademicDegree()), teacher.getId());
         addressDao.update(teacher.getAddress());
-        teacher.getCourses().forEach(course -> jdbcTemplate.update(DELETE_IRRELEVANT_COURSES_BY_TEACHER_QUERY,
-                teacher.getId(), course.getId()));
+        List<Course> courses = courseDao.findByTeacher(teacher.getId());
+        courses.forEach(course -> {
+            if (!teacher.getCourses().contains(course)) {
+                jdbcTemplate.update(DELETE_COURSE_BY_TEACHER_QUERY, teacher.getId(), course.getId());
+            }
+        });
         teacher.getCourses()
-                .forEach(course -> jdbcTemplate.update(ADD_COURSE_BY_TEACHER_QUERY, teacher.getId(), course.getId()));
-    }
+                .forEach(course -> {
+                    if (!courses.contains(course)) {
+                        jdbcTemplate.update(ADD_COURSE_BY_TEACHER_QUERY, teacher.getId(), course.getId());
+                    }
+                });
+            }
 
     @Override
     public void delete(int id) {
