@@ -81,18 +81,11 @@ public class TeacherDao implements CrudRepository<Teacher> {
                 teacher.getEmail(), String.valueOf(teacher.getAcademicDegree()), teacher.getId());
         addressDao.update(teacher.getAddress());
         List<Course> courses = courseDao.findByTeacher(teacher.getId());
-        courses.forEach(course -> {
-            if (!teacher.getCourses().contains(course)) {
-                jdbcTemplate.update(DELETE_COURSE_BY_TEACHER_QUERY, teacher.getId(), course.getId());
-            }
-        });
-        teacher.getCourses()
-                .forEach(course -> {
-                    if (!courses.contains(course)) {
-                        jdbcTemplate.update(ADD_COURSE_BY_TEACHER_QUERY, teacher.getId(), course.getId());
-                    }
-                });
-            }
+        courses.stream().filter(course -> !teacher.getCourses().contains(course)).forEach(
+                course -> jdbcTemplate.update(DELETE_COURSE_BY_TEACHER_QUERY, teacher.getId(), course.getId()));
+        teacher.getCourses().stream().filter(course -> !courses.contains(course))
+                .forEach(course -> jdbcTemplate.update(ADD_COURSE_BY_TEACHER_QUERY, teacher.getId(), course.getId()));
+    }
 
     @Override
     public void delete(int id) {

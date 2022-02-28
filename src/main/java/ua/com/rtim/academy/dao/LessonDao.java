@@ -73,16 +73,10 @@ public class LessonDao implements CrudRepository<Lesson> {
         jdbcTemplate.update(UPDATE_LESSON_QUERY, lesson.getTeacher().getId(), lesson.getCourse().getId(),
                 lesson.getAudience().getId(), lesson.getDate(), lesson.getId());
         List<Group> groups = groupDao.findByLesson(lesson);
-        groups.forEach(group -> {
-            if (!lesson.getGroups().contains(group)) {
-                jdbcTemplate.update(DELETE_GROUP_BY_LESSON_QUERY, lesson.getId(), group.getId());
-            }
-        });
-        lesson.getGroups().forEach(group -> {
-            if (!groups.contains(group)) {
-                jdbcTemplate.update(ADD_GROUP_BY_LESSON_QUERY, lesson.getId(), group.getId());
-            }
-        });
+        groups.stream().filter(group -> !lesson.getGroups().contains(group))
+                .forEach(group -> jdbcTemplate.update(DELETE_GROUP_BY_LESSON_QUERY, lesson.getId(), group.getId()));
+        lesson.getGroups().stream().filter(group -> !groups.contains(group))
+                .forEach(group -> jdbcTemplate.update(ADD_GROUP_BY_LESSON_QUERY, lesson.getId(), group.getId()));
     }
 
     @Override
