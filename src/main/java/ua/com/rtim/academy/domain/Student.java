@@ -1,6 +1,7 @@
 package ua.com.rtim.academy.domain;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Student {
 
@@ -84,5 +85,25 @@ public class Student {
 
     public void setGroup(Group group) {
         this.group = group;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(address, birthDate, email, firstName, gender, group, id, lastName, phone);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Student other = (Student) obj;
+        return Objects.equals(address, other.address) && Objects.equals(birthDate, other.birthDate)
+                && Objects.equals(email, other.email) && Objects.equals(firstName, other.firstName)
+                && gender == other.gender && Objects.equals(group, other.group) && Objects.equals(id, other.id)
+                && Objects.equals(lastName, other.lastName) && Objects.equals(phone, other.phone);
     }
 }

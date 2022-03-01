@@ -2,6 +2,7 @@ package ua.com.rtim.academy.domain;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 public class Lesson {
 
@@ -67,5 +68,22 @@ public class Lesson {
 
     public void setGroups(List<Group> groups) {
         this.groups = groups;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(date, id, time);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Lesson other = (Lesson) obj;
+        return Objects.equals(date, other.date) && Objects.equals(id, other.id) && Objects.equals(time, other.time);
     }
 }

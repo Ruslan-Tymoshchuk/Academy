@@ -2,11 +2,12 @@ package ua.com.rtim.academy.ui;
 
 import java.util.Scanner;
 
+import ua.com.rtim.academy.dao.AddressDao;
 import ua.com.rtim.academy.domain.Address;
 
 public class AddressMenuItem {
 
-    public Address addAddress(Scanner scanner) {
+    public Address addAddress(AddressDao addressDao, Scanner scanner) {
         Address address = new Address();
         System.out.println("Country");
         address.setCountry(scanner.next());
@@ -19,11 +20,11 @@ public class AddressMenuItem {
         System.out.println("House number");
         address.setHouseNumber(scanner.next());
         System.out.println("Index");
-        address.setIndex(scanner.next());
+        address.setPostalCode(scanner.next());
         return address;
     }
 
-    public void updateAddress(Address address, Scanner scanner) {
+    public void updateAddress(AddressDao addressDao, Address address, Scanner scanner) {
         System.out.println("Address: a: Country, b: Region, c: City, d: Street, e: House number, f: Index");
         switch (scanner.next()) {
         case "a":
@@ -42,10 +43,11 @@ public class AddressMenuItem {
             address.setHouseNumber(scanner.next());
             break;
         case "f":
-            address.setIndex(scanner.next());
+            address.setPostalCode(scanner.next());
             break;
         default:
             break;
         }
+        addressDao.update(address);
     }
 }
